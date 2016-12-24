@@ -9,7 +9,12 @@
 | by your application. Just tell Laravel the URIs it should respond
 | to using a Closure or controller method. Build something great!
 |
+
+
 */
+//前台
+Route::get('/', 'IndexController@index');
+Route::get('/logout', 'Auth\LoginController@logout');
 Auth::routes();
 //要登录的链接
 Route::group(['namespace' => 'AlipayOpen', 'middleware' => 'auth', 'prefix' => 'admin/alipayopen'], function () {

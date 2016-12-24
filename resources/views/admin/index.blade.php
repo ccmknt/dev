@@ -128,7 +128,8 @@
                         </form>
                     </div>
                     <ul class="nav navbar-top-links navbar-right">
-                        <li class="dropdown">欢迎您:{{Auth::user()->name}}</li>
+                        <li class="dropdown">欢迎您:{{Auth::user()->name}} </li>
+                        <a href="/logout"> <button type="button" class="btn btn-default btn-xs">退出</button></a>
                         <li class="dropdown">
                             <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
                                 <i class="fa fa-envelope"></i> <span class="label label-warning">16</span>
