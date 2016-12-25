@@ -334,7 +334,7 @@
                        ,avg_price:$("#avg_price").val(),licence:$("#licence").val(),licence_code:$("#licence_code").val()
                        ,licence_name:$("#licence_name").val(),business_certificate:$("#business_certificate").val(),business_certificate_expires:$("#business_certificate_expires").val()
                        ,operate_notify_url:$("#operate_notify_url").val(),implement_id:$("#implement_id").val(),no_smoking:$("#no_smoking").val()
-                       ,box:$("#box").val(),request_id:$("#request_id").val(),other_authorization:$("#other_authorization").val()
+                       ,box:$("#box").val(),request_id:$("#request_id").val(),auth_letter:$("#auth_letter").val(),other_authorization:$("#other_authorization").val()
                        ,licence_expires:$("#licence_expires").val()
                    },
                    function (result) {
