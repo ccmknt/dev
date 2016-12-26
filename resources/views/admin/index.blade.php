@@ -39,13 +39,13 @@
                         </a>
                         <ul class="nav nav-second-level">
                             <li>
-                                <a class="J_menuItem" href="{{url('admin/alipayopen/oauth')}}">商户授权</a>
+                                <a class="J_menuItem" href="{{url('admin/alipayopen/oauth')}}">商户应用授权</a>
                             </li>
                             <li>
-                                <a class="J_menuItem" href="{{url('alipayopen/oauthlist')}}">口碑开店</a>
+                                <a class="J_menuItem" href="{{url('alipayopen/oauthlist')}}">口碑开店收款</a>
                             </li>
                             <li>
-                                <a class="J_menuItem" href="{{url('admin/alipayopen/store')}}">门店列表</a>
+                                <a class="J_menuItem" href="{{url('admin/alipayopen/store')}}">口碑门店列表</a>
                             </li>
                             <li>
                                 <a class="J_menuItem" href="{{route('ApplyorderBatchquery')}}">商户操作查询</a>

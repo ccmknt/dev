@@ -9,23 +9,6 @@
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
                         <h5>商户第三方门店授权</h5>
-                        <div class="ibox-tools">
-                            <a class="collapse-link">
-                                <i class="fa fa-chevron-up"></i>
-                            </a>
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="table_basic.html#">
-                                <i class="fa fa-wrench"></i>
-                            </a>
-                            <ul class="dropdown-menu dropdown-user">
-                                <li><a href="table_basic.html#">选项1</a>
-                                </li>
-                                <li><a href="table_basic.html#">选项2</a>
-                                </li>
-                            </ul>
-                            <a class="close-link">
-                                <i class="fa fa-times"></i>
-                            </a>
-                        </div>
                     </div>
                     <div class="ibox-content">
                         <div class="table-responsive">
@@ -46,7 +29,9 @@
                                         <td><span class="pie">{{$v['auth_phone']}}</span></td>
                                         <td>{{$v['created_at']}}</td>
                                         <td>{{$v['updated_at']}}</td>
-                                        <td><a href="{{url('/admin/alipayopen/store/create?app_auth_token='.$v['app_auth_token'])}}"><button type="button" class="btn  btn-success">口碑开店</button></a></td>
+                                        <td><a href="{{url('/admin/alipayopen/store/create?app_auth_token='.$v['app_auth_token'])}}"><button type="button" class="btn  btn-success">口碑开店</button></a>
+                                            <a href="{{url('/admin/alipayopen/onlyskm?user_id='.$v['user_id'])}}"><button type="button" class="btn  btn-success">收款码</button></a>
+                                        </td>
                                     </tr>
                                 @endforeach
                                 </tbody>

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAlipayTradeQueriesTable extends Migration
+class CreateAppOauthUsersStoresTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,10 @@ class CreateAlipayTradeQueriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('alipay_trade_queries', function (Blueprint $table) {
+        Schema::create('app_oauth_users_stores', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('out_trade_no');
-            $table->string('trade_no');
+            $table->string('app_oauth_user_id');
             $table->string('store_id');
-            $table->decimal('total_amount',11,2);
-            $table->string('status');
-            $table->string('type');
             $table->timestamps();
         });
     }
@@ -32,6 +28,6 @@ class CreateAlipayTradeQueriesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('alipay_trade_queries');
+        Schema::dropIfExists('app_oauth_users_stores');
     }
 }

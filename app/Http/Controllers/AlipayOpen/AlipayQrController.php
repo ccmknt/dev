@@ -19,16 +19,29 @@ class AlipayQrController extends AlipayOpenController
 
     public function Skm(Request $request)
     {
-        $u_id=$request->get('id');//这个是系统商户列表的id
-        $config=AlipayIsvConfig::where('id',1)->first();
-        if ($config){
-            $config=$config->toArray();
+        $u_id = $request->get('id');//这个是系统商户列表的id
+        $config = AlipayIsvConfig::where('id', 1)->first();
+        if ($config) {
+            $config = $config->toArray();
         }
-        $config['app_auth_url']= Config::get('alipayopen.app_auth_url');
+        $config['app_auth_url'] = Config::get('alipayopen.app_auth_url');
 
-        $code_url=$config['app_auth_url'].'?app_id='.$config['app_id']."&redirect_uri=".$config['callback'].'&scope=auth_base&state=SXD_'.$u_id;
-        return view('admin.alipayopen.skm',compact('code_url'));
+        $code_url = $config['app_auth_url'] . '?app_id=' . $config['app_id'] . "&redirect_uri=" . $config['callback'] . '&scope=auth_base&state=SXD_' . $u_id;
+        return view('admin.alipayopen.skm', compact('code_url'));
 
+
+    }
+
+    public function OnlySkm(Request $request)
+    {
+        $user_id = $request->get('user_id');//授权的user_id
+        $config = AlipayIsvConfig::where('id', 1)->first();
+        if ($config) {
+            $config = $config->toArray();
+        }
+        $config['app_auth_url'] = Config::get('alipayopen.app_auth_url');
+        $code_url = $config['app_auth_url'] . '?app_id=' . $config['app_id'] . "&redirect_uri=" . $config['callback'] . '&scope=auth_base&state=OSK_' . $user_id;
+        return view('admin.alipayopen.skm', compact('code_url'));
 
     }
 }

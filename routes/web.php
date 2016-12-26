@@ -40,7 +40,11 @@ Route::group(['namespace' => 'AlipayOpen', 'prefix' => 'admin/alipayopen'], func
     Route::get('/oauth', 'OauthController@oauth');
     Route::get('/auth', 'OauthController@auth');
     Route::get('/alipay_trade_precreate', 'AlipayTradePrecreateController@TradePrecreateQrCode')->name('alipay_trade_precreate');
+    //输入金额页面
     Route::get('/alipay_trade_create', 'AlipayCreateOrderController@alipay_trade_create')->name('alipay_trade_create');
+    //仅收款输入金额页
+    Route::get('/alipay_oqr_create', 'AlipayCreateOrderController@alipay_oqr_create')->name('alipay_oqr_create');
+
     Route::get('/', 'HomeController@index');
     Route::get('/home', 'HomeController@home')->name('home');
     Route::get('/notify', 'NotifyController@notify')->name('notify');
@@ -52,10 +56,14 @@ Route::group(['namespace' => 'AlipayOpen', 'prefix' => 'admin/alipayopen'], func
     Route::get('/create', 'AlipayOrderController@create')->name('create');
     //收款码
     Route::get('/skm', 'AlipayQrController@Skm')->name('skm');
+    Route::get('/onlyskm', 'AlipayQrController@OnlySkm')->name('onlyskm');
 });
 //API
 Route::group(['namespace' => 'Api'/*'middleware' => 'auth'*/, 'prefix' => 'admin/api'], function () {
+    //收款码接口
     Route::post('/AlipayTradeCreate', 'AlipayTradeCreateController@AlipayTradeCreate')->name("AlipayTradeCreate");
+    Route::post('/AlipayOqrCreate', 'AlipayTradeCreateController@AlipayOqrCreate')->name("AlipayOqrCreate");
+
     Route::any('/AlipayShopCategory', 'AlipayShopCategoryController@query')->name("AlipayShopCategory");
     Route::any('/getCategory', 'AlipayShopCategoryController@getCategory')->name("getCategory");
     Route::any('/getProvince', 'ProvinceCityController@getProvince')->name("getProvince");

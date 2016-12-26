@@ -64,8 +64,13 @@ class OauthController extends AlipayOpenController
                 return redirect('https://openauth.alipay.com/oauth2/publicAppAuthorize.htm?app_id=2016120503886618&redirect_uri=http%3A%2F%2Fisv.cmkcms.com%2Fcallback&scope=auth_base&state=' . $state);//重新跳转授权
             }
             $request->session()->push('user_data', $re);
+            //有门店自带收款码
             if ($type == 'SXD') {
                 return redirect(url('admin/alipayopen/alipay_trade_create?u_id='.$u_id));//跳转到输入金额页面
+            }
+            //仅生成收款码
+            if ($type == 'OSK') {
+                return redirect(url('admin/alipayopen/alipay_oqr_create?u_id='.$u_id));//跳转到输入金额页面
             }
             /*
              *  dd($re);
