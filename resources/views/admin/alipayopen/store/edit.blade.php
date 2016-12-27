@@ -478,6 +478,7 @@
                         ,
                         box: $("#box").val(),
                         request_id: $("#request_id").val(),
+                        auth_letter:$("#auth_letter").val(),
                         other_authorization: $("#other_authorization").val()
                         ,
                         licence_expires: $("#licence_expires").val()
