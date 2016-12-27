@@ -25,7 +25,6 @@ class StoreController extends AlipayOpenController
      */
     public function index()
     {
-     
         $data = AlipayShopLists::all()->toArray();
         return view('admin.alipayopen.store.index', compact('data'));
     }
@@ -184,10 +183,6 @@ class StoreController extends AlipayOpenController
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
-        //
-    }
 
     /**
      * Show the form for editing the specified resource.
@@ -202,7 +197,6 @@ class StoreController extends AlipayOpenController
         if ($category) {
             $category = $category->toArray();
         }
-
 
         $shop = AlipayShopLists::where('id', $id)->first();
         if ($shop) {

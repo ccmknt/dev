@@ -31,7 +31,7 @@ class OauthController extends AlipayOpenController
         $appid = $config['app_id'];
         $app_oauth_url = Config::get('alipayopen.app_oauth_url');
         $code_url = $app_oauth_url . '?app_id=' . $appid . '&redirect_uri=' . $url;
-        return view('layouts.qr', compact('code_url'));
+        return view('admin.alipayopen.app_auth', compact('code_url'));
     }
     /**商户授权返回函数
      * @param Request $request
