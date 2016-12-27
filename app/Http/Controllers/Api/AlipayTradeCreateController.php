@@ -28,6 +28,8 @@ class AlipayTradeCreateController extends BaseController
         $shop = AlipayShopLists::where('id', $u_id)->first();
         if ($shop) {
             $shop = $shop->toArray();
+        }else{
+            $shop['main_shop_name']="商户";
         }
 
         $config = AlipayIsvConfig::where('id', 1)->first();
@@ -107,6 +109,8 @@ class AlipayTradeCreateController extends BaseController
         $shop = AlipayAppOauthUsers::where('user_id', $u_id)->first();
         if ($shop) {
             $shop = $shop->toArray();
+        }else{
+            $shop['auth_shop_name']="商户";
         }
         $config = AlipayIsvConfig::where('id', 1)->first();
         if ($config) {
@@ -137,7 +141,7 @@ class AlipayTradeCreateController extends BaseController
             " \"quantity\":1," .
             "\"price\":" . $total_amount . "" .
             "}]," .
-            "\"store_id\":\"" . 's'.$shop['user_id'] . "\"," .
+            "\"store_id\":\"" . 'o'.$shop['user_id'] . "\"," .
             "\"extend_params\":{" .
             "\"sys_service_provider_id\":\"" . $config['pid'] . "\"" .
             /*  "\"hb_fq_num\":\"3\"," .

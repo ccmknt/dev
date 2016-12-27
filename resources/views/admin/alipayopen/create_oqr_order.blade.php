@@ -1,4 +1,7 @@
 @extends('layouts.antui')
+@section('title')
+    {{$shop['auth_shop_name']}}
+@endsection
 @section('content')
     <div class="am-list form">
         <div class="am-list-header">收款方:{{$shop['auth_shop_name']}}</div>
@@ -30,10 +33,10 @@
                             tradeNO: data.trade_no
                         }, function (result) {
                             //付款成功
-                            if (result.resultCode=="9000") {
-                           window.location.href="{{url('admin/alipayopen/PaySuccess?price=')}}"+$("#total_amount").val();
+                            if (result.resultCode == "9000") {
+                                window.location.href = "{{url('admin/alipayopen/PaySuccess?price=')}}" + $("#total_amount").val();
                             }
-                            if(result.resultCode=="6001"){
+                            if (result.resultCode == "6001") {
                                 window.location.href = "{{url('admin/alipayopen/OrderErrors?code=6001')}}";
                             }
                         });

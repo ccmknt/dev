@@ -51,6 +51,9 @@
                                 <a class="J_menuItem" href="{{route('ApplyorderBatchquery')}}">商户操作查询</a>
                             </li>
                             <li>
+                                <a class="J_menuItem" href="{{route('alipaytradelist')}}">交易流水查询</a>
+                            </li>
+                            <li>
                                 <a class="J_menuItem" href="">分类更新</a>
                             </li>
                         </ul>

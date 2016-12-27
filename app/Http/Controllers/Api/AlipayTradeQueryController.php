@@ -22,13 +22,11 @@ class AlipayTradeQueryController extends BaseController
     public function QueryStatus(Request $request)
     {
         $out_trade_no = $request->get('out_trade_no');//商户订单号
-        $trade_no = $request->get('out_trade_no');//支付宝交易号
-
+        $trade_no = $request->get('trade_no');//支付宝交易号
         $aop = $this->AopClient();
+        $aop->method="alipay.trade.query";
         $aop->apiVersion = "2.0";
-
         $requests = new AlipayTradeQueryRequest();
-
         if ($out_trade_no) {
             $requests->setBizContent("{" .
                 "    \"out_trade_no\":\"" . $out_trade_no . "\"" .
@@ -38,8 +36,9 @@ class AlipayTradeQueryController extends BaseController
                 "    \"trade_no\":\"" . $trade_no . "\"" .
                 "  }");
         }
-
-        $result = $aop->execute($request);
+        $result = $aop->execute($requests);
+        $responseNode = str_replace(".", "_", $requests->getApiMethodName()) . "_response";
+       return json_encode($result->$responseNode);
     }
 
     //更新订单状态

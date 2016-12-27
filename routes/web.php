@@ -29,6 +29,8 @@ Route::group(['namespace' => 'AlipayOpen', 'middleware' => 'auth', 'prefix' => '
     Route::post('/saveconfig', 'AlipayIsvConfigController@saveconfig')->name('saveconfig');
     //商户业务流水操作查询
     Route::get('/ApplyorderBatchquery', 'ApplyorderBatchqueryController@query')->name('ApplyorderBatchquery');
+    Route::get('/alipaytradelist', 'AlipayTradeListController@index')->name('alipaytradelist');
+
 });
 Route::group(['namespace' => 'AlipayOpen'], function () {
     Route::get('/callback', 'OauthController@callback');
@@ -63,7 +65,10 @@ Route::group(['namespace' => 'Api'/*'middleware' => 'auth'*/, 'prefix' => 'admin
     //收款码接口
     Route::post('/AlipayTradeCreate', 'AlipayTradeCreateController@AlipayTradeCreate')->name("AlipayTradeCreate");
     Route::post('/AlipayOqrCreate', 'AlipayTradeCreateController@AlipayOqrCreate')->name("AlipayOqrCreate");
-
+});
+//API  AUTH
+Route::group(['namespace' => 'Api', 'middleware' => 'auth', 'prefix' => 'admin/api'], function () {
+    Route::any('/QueryStatus', 'AlipayTradeQueryController@QueryStatus')->name("QueryStatus");
     Route::any('/AlipayShopCategory', 'AlipayShopCategoryController@query')->name("AlipayShopCategory");
     Route::any('/getCategory', 'AlipayShopCategoryController@getCategory')->name("getCategory");
     Route::any('/getProvince', 'ProvinceCityController@getProvince')->name("getProvince");
@@ -74,7 +79,6 @@ Route::group(['namespace' => 'Api'/*'middleware' => 'auth'*/, 'prefix' => 'admin
     Route::any('/batchquery', 'AlipayQueryController@batchquery')->name("batchquery");
     Route::any('/ApplyOrderBatchQuery', 'AlipayQueryController@ApplyOrderBatchQuery')->name("ApplyOrderBatchQuery");
     Route::any('/ShopQueryDetail', 'AlipayQueryController@ShopQueryDetail')->name("ShopQueryDetail");
-    Route::any('/QueryStatus', 'AlipayTradeQueryController@QueryStatus')->name("QueryStatus");
 });
 Route::group(['namespace' => 'Weixin', 'prefix' => 'admin/weixin'], function () {
     Route::any('/server', 'ServerController@server');
