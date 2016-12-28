@@ -30,13 +30,14 @@ Route::group(['namespace' => 'AlipayOpen', 'middleware' => 'auth', 'prefix' => '
     //商户业务流水操作查询
     Route::get('/ApplyorderBatchquery', 'ApplyorderBatchqueryController@query')->name('ApplyorderBatchquery');
     Route::get('/alipaytradelist', 'AlipayTradeListController@index')->name('alipaytradelist');
+   //授权列表
+    Route::get('/oauthlist', 'OauthController@oauthlist')->name('oauthlist');
 
 });
 Route::group(['namespace' => 'AlipayOpen'], function () {
     Route::get('/callback', 'OauthController@callback');
     Route::get('alipayopen/userinfo', 'OauthController@userinfo');
     Route::post('alipayopen/userinfoinsert', 'OauthController@userinfoinsert')->name('userinfo');
-    Route::get('alipayopen/oauthlist', 'OauthController@oauthlist')->name('oauthlist');
 });
 Route::group(['namespace' => 'AlipayOpen', 'prefix' => 'admin/alipayopen'], function () {
     Route::get('/oauth', 'OauthController@oauth');

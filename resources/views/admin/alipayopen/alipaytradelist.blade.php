@@ -7,7 +7,6 @@
             </h5>
         </div>
         <div class="ibox-content">
-
             <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper form-inline" role="grid">
                 <table class="table table-striped table-bordered table-hover dataTables-example dataTable"
                        id="DataTables_Table_0" aria-describedby="DataTables_Table_0_info">
@@ -40,45 +39,43 @@
                     </tr>
                     </thead>
                     <tbody id="appends">
-                    @foreach($data as $v)
-                        <tr class='gradeA odd'>
-                            <td class=''>{{$v['out_trade_no']}}</td>
-                            <td class=''>{{$v['trade_no']}}</td>
-                            <td class=''>{{$v['store_id']}}</td>
-                            <td class=''>{{$v['created_at']}}</td>
-                            <td class=''>{{$v['updated_at']}}</td>
-                            <td class=''>{{$v['buyer_logon_id']}}</td>
-                            <td class=''>{{$v['total_amount']}}</td>
-                            @if($v['trade_status']=="WAIT_BUYER_PAY")
-                                <td class=''>等待买家付款</td>
-                            @elseif($v['trade_status']=="TRADE_CLOSED")
-                                <td class=''>未付款交易超时关闭</td>
-                            @elseif($v['trade_status']=="TRADE_FINISHED")
-                                <td class=''>交易结束</td>
-                            @elseif($v['trade_status']=="TRADE_SUCCESS")
-                                <td  style="color: green">交易支付成功</td>
-                            @endif
-                        </tr>
-                    @endforeach
+                    @if($datapage)
+                        @foreach($datapage as $v)
+                            <tr class='gradeA odd'>
+                                <td class=''>{{$v['out_trade_no']}}</td>
+                                <td class=''>{{$v['trade_no']}}</td>
+                                <td class=''>{{$v['store_id']}}</td>
+                                <td class=''>{{$v['created_at']}}</td>
+                                <td class=''>{{$v['updated_at']}}</td>
+                                <td class=''>{{$v['buyer_logon_id']}}</td>
+                                <td class=''>{{$v['total_amount']}}</td>
+                                @if($v['trade_status']=="WAIT_BUYER_PAY")
+                                    <td class=''>等待买家付款</td>
+                                @elseif($v['trade_status']=="TRADE_CLOSED")
+                                    <td class=''>未付款交易超时关闭</td>
+                                @elseif($v['trade_status']=="TRADE_FINISHED")
+                                    <td class=''>交易结束</td>
+                                @elseif($v['trade_status']=="TRADE_SUCCESS")
+                                    <td style="color: green"><button type="button" class="btn btn-outline btn-success">付款成功</button></td>
+                                @endif
+                            </tr>
+                        @endforeach
                     </tbody>
                 </table>
+
                 <div class="row">
                     <div class="col-sm-6">
-                        <div class="dataTables_info" id="DataTables_Table_0_info" role="alert" aria-live="polite"
-                             aria-relevant="all">显示 1 到 20 项，共 1 项
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
                         <div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_0_paginate">
-                            <ul class="pagination">
-                                <li class="paginate_button previous" aria-controls="DataTables_Table_0" tabindex="0"
-                                    id="DataTables_Table_0_previous"><a href="#">上一页</a></li>
-                                <li class="paginate_button " aria-controls="DataTables_Table_0" tabindex="0"><a
-                                            href="#">1</a></li>
-                            </ul>
+                            {{$paginator->render()}}
                         </div>
                     </div>
                 </div>
+
+                @else
+                    <div class="row">
+                        没有任何交易记录
+                    </div>
+                @endif
             </div>
 
         </div>

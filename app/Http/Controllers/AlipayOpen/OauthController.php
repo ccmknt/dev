@@ -10,6 +10,8 @@ use App\Models\AlipayUser;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Alipayopen\Sdk\AopClient;
@@ -23,9 +25,9 @@ class OauthController extends AlipayOpenController
     //应用授权URL拼装
     public function oauth()
     {
-        $config=AlipayIsvConfig::where('id',1)->first();
-        if ($config){
-            $config=$config->toArray();
+        $config = AlipayIsvConfig::where('id', 1)->first();
+        if ($config) {
+            $config = $config->toArray();
         }
         $url = urlencode($config['callback']);
         $appid = $config['app_id'];
@@ -66,11 +68,11 @@ class OauthController extends AlipayOpenController
             $request->session()->push('user_data', $re);
             //有门店自带收款码
             if ($type == 'SXD') {
-                return redirect(url('admin/alipayopen/alipay_trade_create?u_id='.$u_id));//跳转到输入金额页面
+                return redirect(url('admin/alipayopen/alipay_trade_create?u_id=' . $u_id));//跳转到输入金额页面
             }
             //仅生成收款码
             if ($type == 'OSK') {
-                return redirect(url('admin/alipayopen/alipay_oqr_create?u_id='.$u_id));//跳转到输入金额页面
+                return redirect(url('admin/alipayopen/alipay_oqr_create?u_id=' . $u_id));//跳转到输入金额页面
             }
             /*
              *  dd($re);
@@ -174,10 +176,31 @@ class OauthController extends AlipayOpenController
     }
 
     //商家第三方应用授权列表
-    public function oauthlist()
+    public function oauthlist(Request $request)
     {
-        $data = AlipayAppOauthUsers::all()->toArray();
-        return view('admin.alipayopen.store.oauthlist', compact('data'));
+        $data = AlipayAppOauthUsers::orderBy('created_at', 'desc')->get();
+        if ($data->isEmpty()) {
+            $paginator = "";
+            $datapage = "";
+        } else {
+            $data = $data->toArray();
+            //非数据库模型自定义分页
+            $perPage = 9;//每页数量
+            if ($request->has('page')) {
+                $current_page = $request->input('page');
+                $current_page = $current_page <= 0 ? 1 : $current_page;
+            } else {
+                $current_page = 1;
+            }
+            $item = array_slice($data, ($current_page - 1) * $perPage, $perPage); //注释1
+            $total = count($data);
+            $paginator = new LengthAwarePaginator($item, $total, $perPage, $current_page, [
+                'path' => Paginator::resolveCurrentPath(),
+                'pageName' => 'page',
+            ]);
+            $datapage = $paginator->toArray()['data'];
+        }
+        return view('admin.alipayopen.store.oauthlist', compact('datapage', 'paginator'));
     }
 
     public function getUserAuth()

@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 
@@ -23,10 +25,32 @@ class StoreController extends AlipayOpenController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $data = AlipayShopLists::all()->toArray();
-        return view('admin.alipayopen.store.index', compact('data'));
+        $data = AlipayShopLists::orderBy('created_at', 'desc')->get();
+        if ($data->isEmpty()){
+            $paginator="";
+            $datapage="";
+        }else{
+            $data = $data->toArray();
+            //非数据库模型自定义分页
+            $perPage = 9;//每页数量
+            if ($request->has('page')) {
+                $current_page = $request->input('page');
+                $current_page = $current_page <= 0 ? 1 : $current_page;
+            } else {
+                $current_page = 1;
+            }
+            $item = array_slice($data, ($current_page - 1) * $perPage, $perPage); //注释1
+            $total = count($data);
+            $paginator = new LengthAwarePaginator($item, $total, $perPage, $current_page, [
+                'path' => Paginator::resolveCurrentPath(),
+                'pageName' => 'page',
+            ]);
+            $datapage = $paginator->toArray()['data'];
+        }
+
+        return view('admin.alipayopen.store.index', compact('datapage','paginator'));
     }
 
     /**

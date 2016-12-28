@@ -26,7 +26,8 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                @foreach($data as $v)
+                                @if($datapage)
+                                @foreach($datapage as $v)
                                     <tr>
                                         <td>{{$v['store_id']}}</td>
                                         <td><span class="pie">{{$v['licence_name']}}</span></td>
@@ -39,10 +40,10 @@
                                             <a href="{{'/admin/alipayopen/store/'.$v['id'].'/edit'}}">
                                             <button type="button" class="btn btn-info">重新提交</button>
                                           </a>
-                                            <a href="{{url('admin/alipayopen/skm?id='.$v['id'])}}">
+                                           {{-- <a href="{{url('admin/alipayopen/skm?id='.$v['id'])}}">
                                                 <button type="button" class="btn  btn-sm">商家门店收款码</button></a>
                                             <a href="">
-                                                <button type="button" class="btn">固定金额收款码</button></a>
+                                                <button type="button" class="btn">固定金额收款码</button></a>--}}
                                         </th>
                                        @endif
                                     </tr>
@@ -50,8 +51,20 @@
                                 </tbody>
                             </table>
                         </div>
-
                     </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="dataTables_paginate paging_simple_numbers"
+                                     id="DataTables_Table_0_paginate">
+                                    {{$paginator->render()}}
+                                </div>
+                            </div>
+                        </div>
+                    @else
+                        <div class="row">
+                            没有任何交易记录
+                        </div>
+                    @endif
                 </div>
             </div>
 

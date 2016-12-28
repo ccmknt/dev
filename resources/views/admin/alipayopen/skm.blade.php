@@ -1,3 +1,20 @@
+@extends('layouts.publicStyle')
+@section('content')
+
 <div style="text-align: center">
     <img src="data:image/png;base64, {!! base64_encode(QrCode::format('png')->size(500)->generate($code_url)) !!} ">
+    <p>{{$auth_shop_name}}-收款码</p>
 </div>
+<div class="col-sm-6">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>收款码说明</h5>
+        </div>
+        <div class="ibox-content">
+            <div class="well well-lg">
+                  必须先在支付宝后台签约当面付产品（<a href="https://openhome.alipay.com/isv/isvMerchantManage.htm" target="_blank">https://openhome.alipay.com/isv/isvMerchantManage.htm</a>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
