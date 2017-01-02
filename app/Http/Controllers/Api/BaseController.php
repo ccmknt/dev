@@ -24,6 +24,7 @@ class BaseController extends Controller
         }
         //1.接入参数初始化
         $c = app('AopClient');
+        $c->signType="RSA2";//升级算法
         $c->gatewayUrl = Config::get('alipayopen.gatewayUrl');
         $c->appId = $config['app_id'];
         //软件生成的应用私钥字符串
