@@ -74,7 +74,7 @@
                             <div class="hr-line-dashed"></div>
                             <div class="form-group">
                                 <label>开发平台后台的支付宝rsa公钥</label>
-                                <input  id="alipayrsaPublicKey" value="{{$c['alipayrsaPublicKey']}}" placeholder="请填写软件生成的应用私钥" class="form-control" name="alipayrsaPublicKey"  type="text">
+                                <textarea  id="alipayrsaPublicKey" style="min-height: 100px"  placeholder="请填写软件生成的应用私钥" class="form-control" name="alipayrsaPublicKey"  type="text">{{$c['alipayrsaPublicKey']}}</textarea>
                             </div>
                             <div class="hr-line-dashed"></div>
                             <div class="form-group">
