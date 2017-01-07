@@ -64,7 +64,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Asia/Shanghai',
 
     /*
     |--------------------------------------------------------------------------
@@ -166,7 +166,6 @@ return [
         /*
          * Package Service Providers...
          */
-        Bican\Roles\RolesServiceProvider::class,
         //
 
         /*
@@ -184,7 +183,7 @@ return [
          \Alipayopen\AlipayOpenProvider::class,
         \WeixinPay\WeixinPayProvider::class,
         SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class,
-
+        Zizaco\Entrust\EntrustServiceProvider::class,
     ],
 
     /*
@@ -235,6 +234,7 @@ return [
 
         //扩展
         'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
+        'Entrust'   => Zizaco\Entrust\EntrustFacade::class,
 
     ],
 

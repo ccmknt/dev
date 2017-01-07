@@ -7,13 +7,15 @@ use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvid
 
 class AuthServiceProvider extends ServiceProvider
 {
-    /**
+    /**注册策略
      * The policy mappings for the application.
-     *
+     *模型和处理访问控制的类以键值对的形式写到policies属性中
      * @var array
      */
     protected $policies = [
         'App\Model' => 'App\Policies\ModelPolicy',
+        'App\Models\AlipayShopLists' => 'App\Policies\ShopLists',
+
     ];
 
     /**
@@ -24,7 +26,9 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
-
-        //
+       // 这里的$user是当前登录用户，laravel会处理,在调用的时候不用传入
+          /*  Gate::define('show-post', function ($user, $post) {
+            return $user->id == $post->user_id;
+        });*/
     }
 }

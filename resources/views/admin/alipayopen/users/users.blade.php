@@ -1,6 +1,6 @@
 @extends('layouts.public')
 @section('content')
-    <div class="col-sm-6">
+    <div class="col-sm-12">
         <a class="btn btn-white btn-bitbucket" href="{{url('/register')}}">
             <i class="fa fa-user-md"></i>
         </a>
@@ -30,10 +30,16 @@
                             <td>{{$v['email']}}</td>
                             <td>{{$v['created_at']}}</td>
                             <td>
-                                <button onclick="updateu('{{$v['id']}}')" type="button" class="btn btn-success">修改
+                                <button onclick="updateu('{{$v['id']}}')" type="button"
+                                        class="btn btn-primary btn-rounded">修改
                                 </button>
-                                <button type="button" onclick="deleteu('{{$v['id']}}')" class="btn  btn-danger">删除
-                                </button>
+                                <a class="btn btn-info btn-rounded"
+                                   href="{{url('admin/alipayopen/setRole?user_id='.$v['id'])}}">角色</a>
+                                @if($v['name']!="admin")
+                                    <button type="button" onclick="deleteu('{{$v['id']}}')"
+                                            class="btn btn-danger btn-rounded">删除
+                                    </button>
+                                @endif
                             </td>
                         </tr>
                     @endforeach
@@ -52,15 +58,14 @@
 
         function deleteu(id) {
             layer.confirm('数据价值很重要！确定要删除用户信息？', {
-                btn: ['确定','取消'] //按钮
-            }, function(){
-                $.post("{{route('deleteu')}}",{id:id,_token:"{{csrf_token()}}"},function(result){
+                btn: ['确定', '取消'] //按钮
+            }, function () {
+                $.post("{{route('deleteu')}}", {id: id, _token: "{{csrf_token()}}"}, function (result) {
                     window.location.href = "{{route('users')}}";
                 });
-            }, function(){
+            }, function () {
 
             });
-
         }
     </script>
 @endsection

@@ -9,12 +9,19 @@
 namespace App\Http\Controllers\AlipayOpen;
 
 
+use Illuminate\Support\Facades\Auth;
+
 class ApplyorderBatchqueryController extends AlipayOpenController
 {
 
 
     public function query()
     {
-      return  view('admin.alipayopen.store.applyorderbatchquery');
+        $auth = Auth::user()->can('ApplyorderBatchquery');
+        if (!$auth) {
+            echo '你没有权限操作！';
+            die;
+        }
+        return view('admin.alipayopen.store.applyorderbatchquery');
     }
 }

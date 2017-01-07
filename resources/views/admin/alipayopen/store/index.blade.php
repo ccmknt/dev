@@ -61,9 +61,7 @@
                             </div>
                         </div>
                     @else
-                        <div class="row">
-                            没有任何交易记录
-                        </div>
+                            没有任何记录
                     @endif
                 </div>
             </div>

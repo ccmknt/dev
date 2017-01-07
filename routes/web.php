@@ -22,6 +22,7 @@ Route::group(['namespace' => 'AlipayOpen', 'middleware' => 'auth', 'prefix' => '
     //admin 管理用户模块
     Route::get('/users', 'UsersController@users')->name('users');
     Route::get('/updateu', 'UsersController@updateu')->name('updateu');
+    Route::post('/useradd', 'UsersController@useradd')->name('useradd');
     Route::post('/updateuSave', 'UsersController@updateuSave')->name('updateuSave');
     Route::post('/deleteu', 'UsersController@deleteu')->name('deleteu');
     //后台配置模块
@@ -32,6 +33,16 @@ Route::group(['namespace' => 'AlipayOpen', 'middleware' => 'auth', 'prefix' => '
     Route::get('/alipaytradelist', 'AlipayTradeListController@index')->name('alipaytradelist');
    //授权列表
     Route::get('/oauthlist', 'OauthController@oauthlist')->name('oauthlist');
+
+    //权限管理
+    Route::resource('/role','RoleController');
+    Route::resource('/permission','PermissionController');
+    Route::get('/assignment', 'RolePermissionController@assignment')->name('assignment');
+    Route::post('/assignmentpost', 'RolePermissionController@assignmentpost')->name('assignmentpost');
+    Route::post('/delRole', 'RolePermissionController@delRole')->name('delRole');
+    Route::get('/setRole', 'RolePermissionController@setRole')->name('setRole');
+    Route::post('/setRolePost', 'RolePermissionController@setRolePost')->name('setRolePost');
+
 
 });
 Route::group(['namespace' => 'AlipayOpen'], function () {
@@ -60,21 +71,28 @@ Route::group(['namespace' => 'AlipayOpen', 'prefix' => 'admin/alipayopen'], func
     //收款码
     Route::get('/skm', 'AlipayQrController@Skm')->name('skm');
     Route::get('/onlyskm', 'AlipayQrController@OnlySkm')->name('onlyskm');
+
+    //员工推广界面提交
+    Route::get('/selfserviceadd', 'SelfServiceShosController@selfserviceadd')->name('selfserviceadd');
+    Route::post('/selfshoppost', 'SelfServiceShosController@SelfShopPost')->name('SelfShopPost');
 });
 //API
 Route::group(['namespace' => 'Api'/*'middleware' => 'auth'*/, 'prefix' => 'admin/api'], function () {
     //收款码接口
     Route::post('/AlipayTradeCreate', 'AlipayTradeCreateController@AlipayTradeCreate')->name("AlipayTradeCreate");
     Route::post('/AlipayOqrCreate', 'AlipayTradeCreateController@AlipayOqrCreate')->name("AlipayOqrCreate");
+    Route::any('/getProvince', 'ProvinceCityController@getProvince')->name("getProvince");
+    Route::any('/getCity', 'ProvinceCityController@getCity')->name("getCity");
 });
 //API  AUTH
 Route::group(['namespace' => 'Api', 'middleware' => 'auth', 'prefix' => 'admin/api'], function () {
     Route::any('/QueryStatus', 'AlipayTradeQueryController@QueryStatus')->name("QueryStatus");
     Route::any('/AlipayShopCategory', 'AlipayShopCategoryController@query')->name("AlipayShopCategory");
     Route::any('/getCategory', 'AlipayShopCategoryController@getCategory')->name("getCategory");
-    Route::any('/getProvince', 'ProvinceCityController@getProvince')->name("getProvince");
-    Route::any('/getCity', 'ProvinceCityController@getCity')->name("getCity");
+    /*Route::any('/getProvince', 'ProvinceCityController@getProvince')->name("getProvince");
+    Route::any('/getCity', 'ProvinceCityController@getCity')->name("getCity");*/
     Route::any('/upload', 'PublicController@upload')->name("upload");
+    Route::any('/uploadlocal', 'PublicController@uploadlocal')->name("uploadlocal");
     Route::any('/uploadfile', 'PublicController@uploadfile')->name("uploadfile");
     Route::any('/SummaryBatchquery', 'AlipayQueryController@index')->name("ShopSummaryBatchquery");
     Route::any('/batchquery', 'AlipayQueryController@batchquery')->name("batchquery");

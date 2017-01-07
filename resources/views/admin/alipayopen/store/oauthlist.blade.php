@@ -52,9 +52,8 @@
                             </div>
                         </div>
                         @else
-                            <div class="row">
-                                没有任何交易记录
-                            </div>
+                                没有记录
+
                         @endif
                     </div>
                 </div>

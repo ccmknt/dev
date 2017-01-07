@@ -10,7 +10,9 @@ namespace App\Http\Controllers\AlipayOpen;
 
 
 use App\Models\AlipayIsvConfig;
+use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AlipayIsvConfigController
 {
@@ -18,6 +20,10 @@ class AlipayIsvConfigController
 
     public function isvconfig()
     {
+        $auth = Auth::user()->can('isvconfigs');
+        if (!$auth) {
+            echo '你没有权限操作！';die;
+        }
         $c=AlipayIsvConfig::where('id', 1)->first();
         if ($c){
             $c=$c->toArray();
@@ -27,6 +33,10 @@ class AlipayIsvConfigController
 
     public function saveconfig(Request $request)
     {
+        $auth = Auth::user()->can('isvconfigs');
+        if (!$auth) {
+            echo '你没有权限操作！';die;
+        }
         $c=AlipayIsvConfig::where('id', 1)->first();
         $data = [
             'id' => 1,

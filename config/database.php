@@ -64,6 +64,13 @@ return [
             'prefix' => '',
             'strict' => true,
             'engine' => null,
+            'dump' => [
+                'dump_binary_path' => '/usr/local/mysql/bin/', // only the path, so without `mysqldump` or `pg_dump`
+                'use_single_transaction',
+                'timeout' => 60,
+                'exclude_tables' => [],
+                'add_extra_option' => '--extended-insert=FALSE --complete-insert=true',
+            ]
         ],
 
         'pgsql' => [

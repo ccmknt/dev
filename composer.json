@@ -13,7 +13,7 @@
         "overtrue/laravel-wechat": "~3.0",
         "simplesoftwareio/simple-qrcode": "~1",
         "doctrine/dbal": "^2.5",
-        "bican/roles": "2.1.*"
+        "zizaco/entrust": "5.2.x-dev"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

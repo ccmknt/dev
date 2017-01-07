@@ -39,25 +39,34 @@
                         </a>
                         <ul class="nav nav-second-level">
                             <li>
-                                <a class="J_menuItem" href="{{url('admin/alipayopen/oauth')}}">商户应用授权</a>
+                                <a class="J_menuItem" href="{{url('admin/alipayopen/oauth')}}">我的授权二维码</a>
                             </li>
+                            @permission('oauthlist')
                             <li>
                                 <a class="J_menuItem" href="{{url('admin/alipayopen/oauthlist')}}">口碑开店收款</a>
                             </li>
+                            @endpermission
+                            @permission('store')
                             <li>
                                 <a class="J_menuItem" href="{{url('admin/alipayopen/store')}}">口碑门店列表</a>
                             </li>
+                            @endpermission
+                            @permission('ApplyorderBatchquery')
                             <li>
                                 <a class="J_menuItem" href="{{route('ApplyorderBatchquery')}}">商户操作查询</a>
                             </li>
+                            @endpermission
+                            @permission('alipaytradelist')
                             <li>
                                 <a class="J_menuItem" href="{{route('alipaytradelist')}}">交易流水查询</a>
                             </li>
+                            @endpermission
                             <li>
                                 <a class="J_menuItem" href="">分类更新</a>
                             </li>
                         </ul>
                     </li>
+                    @permission('isvconfigs')
                     <li>
                         <a href="#">
                             <i class="fa fa-desktop"></i>
@@ -65,11 +74,15 @@
                             <span class="fa arrow"></span>
                         </a>
                         <ul class="nav nav-second-level">
+
                             <li>
                                 <a class="J_menuItem" href="{{route('isvconfig')}}">基础配置</a>
                             </li>
+
                         </ul>
                     </li>
+                    @endpermission
+                    @permission('spset')
                     <li>
                         <a href="#">
                             <i class="glyphicon glyphicon-ok-sign"></i>
@@ -82,8 +95,9 @@
                             </li>
                         </ul>
                     </li>
+                    @endpermission
+                    @permission('alipayadd')
                     <li>
-
                         <a href="#">
                             <i class="glyphicon glyphicon-send"></i>
                             <span class="nav-label">广告系统管理</span>
@@ -95,6 +109,8 @@
                             </li>
                         </ul>
                     </li>
+                    @endpermission
+                    @permission('set')
                     <li>
                         <a href="#">
                             <i class="fa fa-magic"></i>
@@ -102,19 +118,30 @@
                             <span class="fa arrow"></span>
                         </a>
                         <ul class="nav nav-second-level">
+                            @permission('users')
                             <li>
                                 <a class="J_menuItem" href="{{url('admin/alipayopen/users')}}">员工管理</a>
                             </li>
+                            @endpermission
+                            @permission('role')
                             <li>
-                                <a class="J_menuItem" href="">权限管理</a>
+                                <a class="J_menuItem" href="{{url('admin/alipayopen/role')}}">角色管理</a>
                             </li>
+                            @endpermission
+                            @permission('permission')
+                            <li>
+                                <a class="J_menuItem" href="{{url('admin/alipayopen/permission')}}">权限管理</a>
+                            </li>
+                            @endpermission
+                            @permission('users')
                             <li>
                                 <a class="J_menuItem" href="">网站设置</a>
                             </li>
+                            @endpermission
 
                         </ul>
                     </li>
-
+                    @endpermission
                 </ul>
             </div>
         </nav>
@@ -123,16 +150,20 @@
         <div id="page-wrapper" class="gray-bg dashbard-1">
             <div class="row border-bottom">
                 <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
-                    <div class="navbar-header"><a class="navbar-minimalize minimalize-styl-2 btn btn-info " href="#"><i class="fa fa-bars"></i> </a>
+                    <div class="navbar-header"><a class="navbar-minimalize minimalize-styl-2 btn btn-info " href="#"><i
+                                    class="fa fa-bars"></i> </a>
                         <form role="search" class="navbar-form-custom" method="post" action="">
                             <div class="form-group">
-                                <input placeholder="请输入您需要查找的内容 …" class="form-control" name="top-search" id="top-search" type="text">
+                                <input placeholder="请输入您需要查找的内容 …" class="form-control" name="top-search"
+                                       id="top-search" type="text">
                             </div>
                         </form>
                     </div>
                     <ul class="nav navbar-top-links navbar-right">
                         <li class="dropdown">欢迎您:{{Auth::user()->name}} </li>
-                        <a href="/logout"> <button type="button" class="btn btn-default btn-xs">退出</button></a>
+                        <a href="/logout">
+                            <button type="button" class="btn btn-default btn-xs">退出</button>
+                        </a>
                         <li class="dropdown">
                             <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
                                 <i class="fa fa-envelope"></i> <span class="label label-warning">16</span>
@@ -212,7 +243,8 @@
                 </nav>
             </div>
             <div class="row J_mainContent" id="content-main">
-                <iframe id="J_iframe" width="100%" height="100%" src="{{route('home')}}" frameborder="0" data-id="index_v1.html" seamless></iframe>
+                <iframe id="J_iframe" width="100%" height="100%" src="{{route('home')}}" frameborder="0"
+                        data-id="index_v1.html" seamless></iframe>
             </div>
         </div>
         <!--右侧部分结束-->

@@ -4,18 +4,19 @@ namespace App;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-
-class User extends Authenticatable
+use Zizaco\Entrust\Traits\EntrustUserTrait;
+class User extends  Authenticatable
 {
-    use Notifiable;
+    use EntrustUserTrait;
+   // use Notifiable;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-   protected $fillable = [
-        'name', 'email', 'password','phone'
+    protected $fillable = [
+        'name', 'email', 'password', 'phone'
     ];
 
     /**
@@ -26,4 +27,9 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function owns($related)
+    {
+        return $this->id == $related->user_id;
+    }
 }

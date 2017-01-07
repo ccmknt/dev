@@ -23,7 +23,6 @@ class ServerController extends Controller
                 'level' => 'debug',
                 'file' => storage_path().'/logs/easywechat.log', // XXX: 绝对路径！！！！
             ],
-            //...
         ];
         $app = new Application($options);
 
@@ -31,10 +30,6 @@ class ServerController extends Controller
         $user = $app->user;
 
         $server->setMessageHandler(function($message) use ($user) {
-          //  $fromUser = $user->get($message->FromUserName);
-
-           // return "{$fromUser->nickname} 您好！欢迎关注 overtrue!";
-
             return '您好！欢迎关注 ccmknt';
         });
 

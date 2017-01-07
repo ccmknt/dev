@@ -27,7 +27,14 @@ class StoreController extends AlipayOpenController
      */
     public function index(Request $request)
     {
-        $data = AlipayShopLists::orderBy('created_at', 'desc')->get();
+        $auth = Auth::user()->can('store');
+        if (!$auth) {
+            echo '你没有权限操作！';die;
+        }
+        $data = AlipayShopLists::where('user_id',Auth::user()->id)->orderBy('created_at', 'desc')->get();
+        if (Auth::user()->hasRole('admin')) {
+            $data = AlipayShopLists::orderBy('created_at', 'desc')->get();
+        }
         if ($data->isEmpty()){
             $paginator="";
             $datapage="";

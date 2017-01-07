@@ -16,6 +16,7 @@ class CreateAlipayAppOauthUsersTable extends Migration
         Schema::create('alipay_app_oauth_users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('user_id');
+            $table->integer('promoter_id');
             $table->string('auth_shop_name');
             $table->string('auth_phone');
             $table->string('auth_app_id');

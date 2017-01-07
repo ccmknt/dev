@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Alipayopen\Sdk\AopClient;
@@ -25,6 +27,7 @@ class OauthController extends AlipayOpenController
     //应用授权URL拼装
     public function oauth()
     {
+
         $config = AlipayIsvConfig::where('id', 1)->first();
         if ($config) {
             $config = $config->toArray();
@@ -32,7 +35,7 @@ class OauthController extends AlipayOpenController
         $url = urlencode($config['callback']);
         $appid = $config['app_id'];
         $app_oauth_url = Config::get('alipayopen.app_oauth_url');
-        $code_url = $app_oauth_url . '?app_id=' . $appid . '&redirect_uri=' . $url;
+        $code_url = $app_oauth_url . '?app_id=' . $appid . '&redirect_uri=' . $url . "&state=App_" . Auth::user()->id;
         return view('admin.alipayopen.app_auth', compact('code_url'));
     }
     /**商户授权返回函数
@@ -42,10 +45,60 @@ class OauthController extends AlipayOpenController
     public function callback(Request $request)
     {
         $state = $request->get('state');//个人授权有这个参数商户授权没有这个参数
-        //A用户授权
-        if ($state) {
+        $arr = explode('_', $state);
+        //第三方应用授权
+        if ($arr[0] == "App") {
+            //1.初始化参数配置
+            $c = $this->AopClient();
+            //2.执行相应的接口获得相应的业务
+            //获取app_auth_code
+            $app_auth_code = $request->get('app_auth_code');
+            $promoter_id = $arr[1];
+            //使用app_auth_code换取app_auth_token
+            $obj = new AlipayOpenAuthTokenAppRequest();
+            $obj->setApiVersion('2.0');
+            $obj->setBizContent("{" .
+                "    \"grant_type\":\"authorization_code\"," .
+                "    \"code\":\"$app_auth_code\"," .
+                "  }");
+            try {
+                $data = $c->execute($obj);
+                $app_response = $data->alipay_open_auth_token_app_response;
+            } catch (\Exception $exception) {
+                return redirect('/admin/alipayopen/oauth');
+            }
+            $model = [
+                "user_id" => $app_response->user_id,
+                "app_auth_token" => $app_response->app_auth_token,
+                "app_refresh_token" => $app_response->app_refresh_token,
+                "expires_in" => $app_response->expires_in,
+                "re_expires_in" => $app_response->re_expires_in,
+                "auth_app_id" => $app_response->auth_app_id,
+                "promoter_id" => $promoter_id,
+                "auth_shop_name" => "",
+                "auth_phone" => "",
+            ];
+            $alipay_user = AlipayAppOauthUsers::where('user_id', $app_response->user_id)->first();//如果存在修改信息
+            if ($alipay_user) {
+                $re = AlipayAppOauthUsers::where('user_id', $app_response->user_id)
+                    ->update($model);
+            } else {
+                $re = AlipayAppOauthUsers::create($model);//新增信息
+            }
+            //Cache::put('key', 'value', '527040');//一年
+            //这里拿到商户信息如下 auth_token 有效期1年
+            //  +"code": "10000"
+            // +"msg": "Success"
+            // +"app_auth_token": "201610BB7bae5f482d3042b58926dcb331b80X20"
+            // +"app_refresh_token": "201610BB206dad017d0049218f89418fb048eX20"
+            //  +"auth_app_id": "2016072800112318"
+            //  +"expires_in": 31536000
+            // +"re_expires_in": 32140800
+            //  +"user_id": "2088102168897200"
+            return redirect("/alipayopen/userinfo?user_id=" . $app_response->user_id);
+        } //A用户授权
+        else {
             //SYD_2088402162863826  扫码下单 生成二维码 用户输入金额 完成付款
-            $arr = explode('_', $state);
             $type = $arr[0];
             $u_id = $arr[1];
             //1.初始化参数配置
@@ -83,55 +136,8 @@ class OauthController extends AlipayOpenController
             +"refresh_token": "composeB5ae6765a63b648a1b389aaf72cf9dX04"
             +"user_id": "2088102168684040"
             */
-        } //B第三方应用授权
-        else {
-            //1.初始化参数配置
-            $c = $this->AopClient();
-            //2.执行相应的接口获得相应的业务
-            //获取app_auth_code
-            $app_auth_code = $request->get('app_auth_code');
-            //使用app_auth_code换取app_auth_token
-            $obj = new AlipayOpenAuthTokenAppRequest();
-            $obj->setApiVersion('2.0');
-            $obj->setBizContent("{" .
-                "    \"grant_type\":\"authorization_code\"," .
-                "    \"code\":\"$app_auth_code\"," .
-                "  }");
-            try {
-                $data = $c->execute($obj);
-                $app_response = $data->alipay_open_auth_token_app_response;
-            } catch (\Exception $exception) {
-                return redirect('/admin/alipayopen/oauth');
-            }
-            $model = [
-                "user_id" => $app_response->user_id,
-                "app_auth_token" => $app_response->app_auth_token,
-                "app_refresh_token" => $app_response->app_refresh_token,
-                "expires_in" => $app_response->expires_in,
-                "re_expires_in" => $app_response->re_expires_in,
-                "auth_app_id" => $app_response->auth_app_id,
-                "auth_shop_name" => "",
-                "auth_phone" => "",
-            ];
-            $alipay_user = AlipayAppOauthUsers::where('user_id', $app_response->user_id)->first();//如果存在修改信息
-            if ($alipay_user) {
-                $re = AlipayAppOauthUsers::where('user_id', $app_response->user_id)
-                    ->update($model);
-            } else {
-                $re = AlipayAppOauthUsers::create($model);//新增信息
-            }
-            //Cache::put('key', 'value', '527040');//一年
-            //这里拿到商户信息如下 auth_token 有效期1年
-            //  +"code": "10000"
-            // +"msg": "Success"
-            // +"app_auth_token": "201610BB7bae5f482d3042b58926dcb331b80X20"
-            // +"app_refresh_token": "201610BB206dad017d0049218f89418fb048eX20"
-            //  +"auth_app_id": "2016072800112318"
-            //  +"expires_in": 31536000
-            // +"re_expires_in": 32140800
-            //  +"user_id": "2088102168897200"
-            return redirect("/alipayopen/userinfo?user_id=" . $app_response->user_id);
         }
+
     }
 
     /*
@@ -178,7 +184,17 @@ class OauthController extends AlipayOpenController
     //商家第三方应用授权列表
     public function oauthlist(Request $request)
     {
-        $data = AlipayAppOauthUsers::orderBy('created_at', 'desc')->get();
+        $auth = Auth::user()->can('oauthlist');
+        if (!$auth) {
+            echo '你没有权限操作！';
+            die;
+        }
+        //
+        $data = AlipayAppOauthUsers::where('promoter_id', Auth::user()->id)->orderBy('created_at', 'desc')->get();
+        if (Auth::user()->hasRole('admin')) {
+            $data = AlipayAppOauthUsers::orderBy('created_at', 'desc')->get();
+        }
+
         if ($data->isEmpty()) {
             $paginator = "";
             $datapage = "";
