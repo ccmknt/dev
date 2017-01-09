@@ -1,23 +1,35 @@
-@extends('layouts.antui')
+@extends('layouts.koubei')
 @section('title')
     {{$shop['auth_shop_name']}}
 @endsection
 @section('content')
-    <div class="am-list form">
-        <div class="am-list-header">收款方:{{$shop['auth_shop_name']}}</div>
-        <div class="am-list-body">
-            <div class="am-list-item am-input-autoclear">
-                <div class="am-list-label">支付金额</div>
-                <div class="am-list-control">
-                    <input placeholder="请输入付款金额" id="total_amount" value="" type="number">
-                </div>
-                <div class="am-list-clear"><i class="am-icon-clear am-icon" style="visibility: hidden;"></i></div>
+    <div class="main">
+        <p class="cite">
+		<span>
+			<img src="{{url('/img/site.jpg')}}">
+		</span>{{$shop['auth_shop_name']}}
+        </p>
+        <div class="type">
+            <div class="top clear">
+                <span>消费总金额（元）</span>
+                <input id="total_amount" value="" type="number" placeholder="请询问服务员后输入">
+            </div>
+            <div class="bot clear">
+                <span class="no">不参与优惠金额（元）</span>
+                <input type="number" placeholder="请询问服务员后输入">
             </div>
         </div>
-    </div>
-    <input type="hidden" value="{{$shop['user_id']}}" id="u_id">
-    <button type="button" id="payLogButton" class="am-button blue">确认付款</button>
-    <input type="hidden" id="token" value="{{csrf_token()}}">
+        <div class="type type_bot">
+            <div class="bot clear">
+                <span>选填备注</span>
+                <input type="text" placeholder="如包房号、服务员号等" class="notice">
+            </div>
+        </div>
+     {{--   <p class="sale">商家优惠</p>
+        <p class="down">8.5折</p>--}}
+        <button type="button" id="payLogButton" class="btn db" style="font-size: 18px;">和店员已确认，立即买单</button>
+        <input type="hidden" value="{{$shop['user_id']}}" id="u_id">
+        <input type="hidden" id="token" value="{{csrf_token()}}">
 @endsection
 @section('js')
     <script>
