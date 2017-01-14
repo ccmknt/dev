@@ -99,6 +99,9 @@ Route::group(['namespace' => 'Api', 'middleware' => 'auth', 'prefix' => 'admin/a
     Route::any('/ApplyOrderBatchQuery', 'AlipayQueryController@ApplyOrderBatchQuery')->name("ApplyOrderBatchQuery");
     Route::any('/ShopQueryDetail', 'AlipayQueryController@ShopQueryDetail')->name("ShopQueryDetail");
 });
+
+
+//微信
 Route::group(['namespace' => 'Weixin', 'prefix' => 'admin/weixin'], function () {
     Route::any('/server', 'ServerController@server');
     Route::any('/oauth', 'OauthController@oauth');
@@ -107,5 +110,18 @@ Route::group(['namespace' => 'Weixin', 'prefix' => 'admin/weixin'], function () 
     Route::any('/order', 'WeixinPayController@order')->name('order');
     Route::any('/createorder', 'WeixinPayController@createOrder');
     Route::any('/ordernotify', 'WeixinPayController@ordernotify');
-    Route::get('/spset', 'ServiceProviderController@spset')->name("spset");//服务商设置
+});
+//需要登陆
+Route::group(['namespace' => 'Weixin','middleware' => 'auth', 'prefix' => 'admin/weixin'], function () {
+    //服务商设置
+    Route::get('/spset', 'ServiceProviderController@spset')->name("spset");
+    Route::post('/spsetPost', 'ServiceProviderController@spsetPost')->name("spsetPost");
+    //商户添加
+    Route::get('/shopList', 'ShopsListsController@index')->name("WxShopList");
+    Route::get('/WxAddShop', 'ShopsListsController@WxAddShop')->name("WxAddShop");
+    Route::post('/WxShopPost', 'ShopsListsController@WxShopPost')->name("WxShopPost");
+    Route::get('/WxEditShop', 'ShopsListsController@WxEditShop')->name("WxEditShop");
+    Route::post('/WxEditShopPost', 'ShopsListsController@WxEditShopPost')->name("WxEditShopPost");
+    Route::get('/WxPayQr', 'ShopsListsController@WxPayQr')->name("WxPayQr");
+    Route::get('/WxOrder', 'ShopsListsController@WxOrder')->name("WxOrder");
 });

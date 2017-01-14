@@ -44,7 +44,7 @@ class OauthController extends AlipayOpenController
 //授权回调获取商户信息主要是获取token
     public function callback(Request $request)
     {
-        $state = $request->get('state');//个人授权有这个参数商户授权没有这个参数
+        $state = $request->get('state','App_7');//个人授权有这个参数商户授权没有这个参数
         $arr = explode('_', $state);
         //第三方应用授权
         if ($arr[0] == "App") {
@@ -96,8 +96,8 @@ class OauthController extends AlipayOpenController
             // +"re_expires_in": 32140800
             //  +"user_id": "2088102168897200"
             return redirect("/alipayopen/userinfo?user_id=" . $app_response->user_id);
-        } //A用户授权
-        else {
+        } //A用户授权跳转收款
+        if ($arr[0] == "OSK"||$arr[0] == "SXD") {
             //SYD_2088402162863826  扫码下单 生成二维码 用户输入金额 完成付款
             $type = $arr[0];
             $u_id = $arr[1];
@@ -118,6 +118,7 @@ class OauthController extends AlipayOpenController
             } catch (\Exception $exception) {
                 return redirect('https://openauth.alipay.com/oauth2/publicAppAuthorize.htm?app_id=2016120503886618&redirect_uri=http%3A%2F%2Fisv.cmkcms.com%2Fcallback&scope=auth_base&state=' . $state);//重新跳转授权
             }
+            $request->session()->forget('user_data');
             $request->session()->push('user_data', $re);
             //有门店自带收款码
             if ($type == 'SXD') {
@@ -194,7 +195,6 @@ class OauthController extends AlipayOpenController
         if (Auth::user()->hasRole('admin')) {
             $data = AlipayAppOauthUsers::orderBy('created_at', 'desc')->get();
         }
-
         if ($data->isEmpty()) {
             $paginator = "";
             $datapage = "";

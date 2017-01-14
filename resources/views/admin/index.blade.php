@@ -66,6 +66,35 @@
                             </li>
                         </ul>
                     </li>
+                    <li>
+                        <a href="#">
+                            <i class="glyphicon glyphicon-ok"></i>
+                            <span class="nav-label">微信支付商户管理</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a class="J_menuItem" href="{{route('WxShopList')}}">微信支付商户列表</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem" href="{{route('WxOrder')}}">商户交易流水查询</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="glyphicon glyphicon-qrcode"></i>
+                            <span class="nav-label">扫码支付多码合一</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            @permission('oauthlist')
+                            <li>
+                                <a class="J_menuItem" href="{{url('admin/alipayopen/oauthlist')}}">微信支付宝二码合一</a>
+                            </li>
+                            @endpermission
+                        </ul>
+                    </li>
                     @permission('isvconfigs')
                     <li>
                         <a href="#">

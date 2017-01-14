@@ -2,54 +2,68 @@
 
 namespace App\Http\Controllers\Weixin;
 
+use App\Models\WeixinPayConfig;
 use Illuminate\Http\Request;
 use EasyWeChat\Foundation\Application;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Cache;
 
-class OauthController extends Controller
+class OauthController extends BaseController
 {
     //授权
     public function oauth(Request $request)
     {
-        $config = [
-            'app_id' => 'wx99dd6fe83cd87924',
-            'scope' => 'snsapi_base',
-            'oauth' => [
-                'scopes' => ['snsapi_base'],
-                'response_type' => 'code',
-                'callback' => url('admin/weixin/oauth_callback'),
-                'state' => '#wechat_redirect'
-            ],
-        ];
-        $app = new Application($config);
-        $response = $app->oauth->scopes(['snsapi_userinfo'])
-            ->setRequest($request)
-            ->redirect();
+        $sub_info = $request->get('sub_info');
+        $arr = explode('_', $sub_info);
+        if ($arr[0] == 'pay') {
+            $options = $this->Options();//基础配置
+            $config = [
+                'app_id' => $options['app_id'],
+                'scope' => 'snsapi_base',
+                'oauth' => [
+                    'scopes' => ['snsapi_base'],
+                    'response_type' => 'code',
+                    'callback' => url('admin/weixin/oauth_callback?sub_info='.$sub_info),
+                ],
+
+            ];
+            $app = new Application($config);
+          /*  $response = $app->oauth->scopes(['snsapi_base'])
+                ->setRequest($request)
+                ->redirect();*/
+
+            $response = $app->oauth->redirect();
 //回调后获取user时也要设置$request对象
 //$user = $app->oauth->setRequest($request)->user();
+        }
+
         return $response;
     }
 
     public function oauth_callback(Request $request)
     {
-
+        $sub_info = $request->get('sub_info');
+        $arr = explode('_', $sub_info);
         $code = $request->input('code');
+        $wxConfig = WeixinPayConfig::where('id', 1)->first();
         $config = [
-            'app_id' => 'wx99dd6fe83cd87924',
-            "secret" => "ff48da35c0b54104396f43fff6c63d39",
+            'app_id' => $wxConfig->app_id,
+            "secret" => $wxConfig->secret,
             "code" => $code,
             "grant_type" => "authorization_code",
         ];
         $app = new Application($config);
         $oauth = $app->oauth;
+
         // 获取 OAuth 授权结果用户信息
         $user = $oauth->user();
-        $userarray=$user->toArray();
-        Cache::put('open_id', $userarray['id'], 10);//缓存用户信息
+        $userarray = $user->toArray();
+        $request->session()->forget('wx_user_data');
+        $request->session()->push('wx_user_data', $userarray);
+        if ($arr[0] == 'pay') {
+            header('location:' . url("admin/weixin/orderview?sub_merchant_id=" . $arr[1])); // 跳转到 user/profile*/
+        }
         //跳转到订单付款页面
-
-        header('location:' . url("admin/weixin/orderview")); // 跳转到 user/profile*/
         /* $_SESSION['wechat_user'] = $user->toArray();
          $targetUrl = empty($_SESSION['target_url']) ? '/' : $_SESSION['target_url'];
          header('location:' . $targetUrl); // 跳转到 user/profile*/

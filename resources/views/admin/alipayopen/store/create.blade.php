@@ -339,7 +339,8 @@
                    },
                    function (result) {
                        if(result.code==10000){
-                           layer.msg(result.sub_msg);
+                           layer.alert('提交保存成功！等待口碑支付宝审核！', {icon: 6});
+                           window.location.href="{{url('/admin/alipayopen/store')}}";
                        }else {
                            layer.msg(result.sub_msg);
                        }
