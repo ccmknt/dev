@@ -14,7 +14,7 @@
                                 <span class="clear">
                                     <span class="block m-t-xs" style="font-size:20px;">
                                         <i class="fa fa-area-chart"></i>
-                                        <strong class="font-bold">店铺管理系统</strong>
+                                        <strong class="font-bold">南京有梦想网络科技有限公司</strong>
                                     </span>
                                 </span>
                             </a>
@@ -90,7 +90,27 @@
                         <ul class="nav nav-second-level">
                             @permission('oauthlist')
                             <li>
-                                <a class="J_menuItem" href="{{url('admin/alipayopen/oauthlist')}}">微信支付宝二码合一</a>
+                                <a class="J_menuItem" href="{{route('AlipayWexinLists')}}">微信支付宝二码合一</a>
+                            </li>
+                            @endpermission
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fa fa-bank"></i>
+                            <span class="nav-label">平安银行通道商户管理</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a class="J_menuItem" href="{{route('PingAnStoreQR')}}">我的商户码</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem" href="{{route('PingAnStoreIndex')}}">商户列表</a>
+                            </li>
+                            @permission('pinganconfig')
+                            <li>
+                                <a class="J_menuItem" href="{{route('pinganconfig')}}">银行通道配置</a>
                             </li>
                             @endpermission
                         </ul>
@@ -164,7 +184,7 @@
                             @endpermission
                             @permission('users')
                             <li>
-                                <a class="J_menuItem" href="">网站设置</a>
+                                <a class="J_menuItem" href="{{route('setApp')}}">网站设置</a>
                             </li>
                             @endpermission
 
