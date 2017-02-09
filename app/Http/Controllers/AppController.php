@@ -1,0 +1,241 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dmk
+ * Date: 2017/2/6
+ * Time: 15:36
+ */
+
+namespace App\Http\Controllers;
+
+
+use App\App;
+use Comodojo\Zip\Zip;
+use Comodojo\Zip\ZipManager;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+class AppController extends Controller
+
+{
+    //检测信息信息
+    public function updateInfo(Request $request)
+    {
+        $app = App::where('id', 1)->first();
+        $post_data['type'] = 'versionInfo';
+        $post_data['app_version'] = $app->app_version;
+        $post_data['app_id'] = $app->app_id;
+        $post_data['token'] = $app->token;//邮箱
+        $versionInfo = $this->https_request('http://app.umxnt.com/api/IsvQuery', $post_data);
+        $version = json_decode($versionInfo, true);
+        if ($version['status'] == 200) {
+            if ($app->app_version < $version['appversionInfo']['original'][0]['version']) {
+                return json_encode([
+                    'status' => 1,
+                    'msg' => '有更新'
+                ]);
+            } else {
+                return json_encode([
+                    'status' => 404,
+                    'msg' => '没有更新内容'
+                ]);
+            }
+        } else {
+            return $versionInfo;
+        }
+
+    }
+
+    //更新文件
+    public function appUpdateFile(Request $request)
+    {
+
+        $app = App::where('id', 1)->first();
+        $post_data['type'] = 'versionFile';
+        $post_data['app_version'] = $app->app_version;
+        $post_data['app_id'] = $app->app_id;
+        $post_data['token'] = $app->token;//邮箱
+        $versionInfo = $this->https_request('http://app.umxnt.com/api/IsvQuery', $post_data);
+        $data = json_decode($versionInfo, true);
+        if ($data['status'] == 200) {
+            $fileTemp = app_path() . '/fileTemp/';
+            $file = $fileTemp . 'update.zip';
+            $sql = base_path() . '/sql.sql';
+            @unlink($file);
+            @unlink($sql);
+            $this->getFile($data['file'], $fileTemp, 'update.zip', 1);//从远程服务器获取文件到本地
+            $filesPath = base_path();
+            try {
+                $zip = Zip::open($file);
+                $re = $zip->extract($filesPath);//解压到根目录
+            } catch (\Exception $exception) {
+                return json_encode([
+                    'status' => 500,
+                    'msg' => '解压文件出错'
+                ]);
+            }
+            if ($re) {
+                @unlink($file);
+                //解压成功
+                $hassql = file_exists($sql);
+                //有数据库文件
+                if ($hassql) {
+                    $sqlconten = file_get_contents($sql);
+                    try {
+                        $re = DB::statement($sqlconten);
+                    } catch (\Exception $exception) {
+                        return json_encode([
+                            'status' => 500,
+                            'msg' => '执行更新sql语句失败'
+                        ]);
+                    }
+                    @unlink($sql);
+                }
+
+                //更新成功 修改数据库
+                $post_data['type'] = 'versionInfo';
+                $versionInfo = $this->https_request('http://app.umxnt.com/api/IsvQuery', $post_data);
+                $version = json_decode($versionInfo, true);
+                try {
+                    $apps = App::where('id', 1)->update(
+                        ['app_version' => $version['appversionInfo']['original'][0]['version'],
+                            'msg' => $version['appversionInfo']['original'][0]['msg']
+                        ]);
+                } catch (\Exception $exception) {
+                    return json_encode([
+                        'status' => 500,
+                        'msg' => '执行修改版本信息失败'
+                    ]);
+                }
+                return json_encode([
+                    'status' => 200,
+                    'msg' => '更新成功！'
+                ]);
+            }
+        } else {
+            return $data;
+        }
+    }
+
+    //设置参数
+    public function setApp()
+    {
+        $app = App::where('id', 1)->first();
+        return view('app.set', compact('app'));
+
+    }
+
+    public function setAppPost(Request $request)
+    {
+        $re = App::where('id', 1)->update($request->except(['_token']));
+        if ($re) {
+            $json = [
+                'status' => 1,
+            ];
+        } else {
+            $json = [
+                'status' => 0,
+            ];
+        }
+
+        return json_encode($json);
+    }
+
+
+    function https_request($url, $data = null)
+    {
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+        if (!empty($data)) {
+            curl_setopt($curl, CURLOPT_POST, 1);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+        }
+        curl_setopt($curl, CURLOPT_REFERER, 'http://' . $_SERVER["SERVER_NAME"]);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        $output = curl_exec($curl);
+        curl_close($curl);
+        return $output;
+    }
+
+    private function httpcopy($url, $file = "", $timeout = 60)
+    {
+        $file = empty($file) ? pathinfo($url, PATHINFO_BASENAME) : $file;
+        $dir = pathinfo($file, PATHINFO_DIRNAME);
+        !is_dir($dir) && @mkdir($dir, 0755, true);
+        $url = str_replace(" ", "%20", $url);
+        if (function_exists('curl_init')) {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+            $temp = curl_exec($ch);
+            $status = curl_getinfo($ch);
+            if (file_exists($file))
+                unlink($file);
+            if (@file_put_contents($file, $temp) && !curl_error($ch)) {
+                return $status;
+            } else {
+                return false;
+            }
+        } else {
+            $opts = array(
+                "http" => array(
+                    "method" => "GET",
+                    "header" => "",
+                    "timeout" => $timeout)
+            );
+            $context = stream_context_create($opts);
+            if (@copy($url, $file, $context)) {
+                return $file;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    protected function getFile($url, $save_dir = '', $filename = '', $type = 0)
+    {
+        if (trim($url) == '') {
+            return false;
+        }
+        if (trim($save_dir) == '') {
+            $save_dir = './';
+        }
+        if (0 !== strrpos($save_dir, '/')) {
+            $save_dir .= '/';
+        }
+        //创建保存目录
+        if (!file_exists($save_dir) && !mkdir($save_dir, 0777, true)) {
+            return false;
+        }
+        //获取远程文件所采用的方法
+        if ($type) {
+            $ch = curl_init();
+            $timeout = 50;
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+            $content = curl_exec($ch);
+            curl_close($ch);
+        } else {
+            ob_start();
+            readfile($url);
+            $content = ob_get_contents();
+            ob_end_clean();
+        }
+        //echo $content;
+        $size = strlen($content);
+        //文件大小
+        $fp2 = @fopen($save_dir . $filename, 'a');
+        fwrite($fp2, $content);
+        fclose($fp2);
+        unset($content, $url);
+        return array(
+            'file_name' => $filename,
+            'save_path' => $save_dir . $filename,
+            'file_size' => $size
+        );
+    }
+}

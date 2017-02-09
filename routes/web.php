@@ -16,6 +16,16 @@
 Route::get('/', 'IndexController@index');
 Route::get('/logout', 'Auth\LoginController@logout');
 Auth::routes();
+
+//需要登陆
+Route::group(['middleware' => 'auth'], function () {
+    Route::post('/updateInfo', 'AppController@updateInfo')->name("updateInfo");
+    Route::post('/appUpdateFile', 'AppController@appUpdateFile')->name("appUpdateFile");
+    Route::get('/setApp', 'AppController@setApp')->name("setApp");
+    Route::post('/setAppPost', 'AppController@setAppPost')->name("setAppPost");
+});
+
+
 //要登录的链接
 Route::group(['namespace' => 'AlipayOpen', 'middleware' => 'auth', 'prefix' => 'admin/alipayopen'], function () {
     Route::resource('/store', 'StoreController');
@@ -31,12 +41,12 @@ Route::group(['namespace' => 'AlipayOpen', 'middleware' => 'auth', 'prefix' => '
     //商户业务流水操作查询
     Route::get('/ApplyorderBatchquery', 'ApplyorderBatchqueryController@query')->name('ApplyorderBatchquery');
     Route::get('/alipaytradelist', 'AlipayTradeListController@index')->name('alipaytradelist');
-   //授权列表
+    //授权列表
     Route::get('/oauthlist', 'OauthController@oauthlist')->name('oauthlist');
 
     //权限管理
-    Route::resource('/role','RoleController');
-    Route::resource('/permission','PermissionController');
+    Route::resource('/role', 'RoleController');
+    Route::resource('/permission', 'PermissionController');
     Route::get('/assignment', 'RolePermissionController@assignment')->name('assignment');
     Route::post('/assignmentpost', 'RolePermissionController@assignmentpost')->name('assignmentpost');
     Route::post('/delRole', 'RolePermissionController@delRole')->name('delRole');
@@ -50,6 +60,13 @@ Route::group(['namespace' => 'AlipayOpen'], function () {
     Route::get('alipayopen/userinfo', 'OauthController@userinfo');
     Route::post('alipayopen/userinfoinsert', 'OauthController@userinfoinsert')->name('userinfo');
 });
+
+//支付宝通知页面
+Route::group(['namespace' => 'AlipayOpen'], function () {
+    Route::get('/notify', 'NotifyController@notify')->name('notify');
+    Route::any('/operate_notify_url', 'NotifyController@operate_notify_url')->name('operate_notify_url');
+});
+
 Route::group(['namespace' => 'AlipayOpen', 'prefix' => 'admin/alipayopen'], function () {
     Route::get('/oauth', 'OauthController@oauth');
     Route::get('/auth', 'OauthController@auth');
@@ -61,8 +78,6 @@ Route::group(['namespace' => 'AlipayOpen', 'prefix' => 'admin/alipayopen'], func
 
     Route::get('/', 'HomeController@index');
     Route::get('/home', 'HomeController@home')->name('home');
-    Route::get('/notify', 'NotifyController@notify')->name('notify');
-    Route::get('/operate_notify_url', 'NotifyController@operate_notify_url')->name('operate_notify_url');
     //单页面
     Route::get('/PaySuccess', 'AlipayPageController@PaySuccess')->name('PaySuccess');
     Route::get('/OrderErrors', 'AlipayPageController@OrderErrors')->name('OrderErrors');
@@ -81,14 +96,17 @@ Route::group(['namespace' => 'Api'/*'middleware' => 'auth'*/, 'prefix' => 'admin
     //收款码接口
     Route::post('/AlipayTradeCreate', 'AlipayTradeCreateController@AlipayTradeCreate')->name("AlipayTradeCreate");
     Route::post('/AlipayOqrCreate', 'AlipayTradeCreateController@AlipayOqrCreate')->name("AlipayOqrCreate");
+    Route::post('/AlipayqrCreate', 'AlipayTradeCreateController@AlipayqrCreate')->name("AlipayqrCreate");
     Route::any('/getProvince', 'ProvinceCityController@getProvince')->name("getProvince");
     Route::any('/getCity', 'ProvinceCityController@getCity')->name("getCity");
+    Route::any('/getCategory', 'AlipayShopCategoryController@getCategory')->name("getCategory");
+    Route::post('/OrderStatus', 'AlipayTradeCreateController@OrderStatus')->name("OrderStatus");
+
 });
 //API  AUTH
 Route::group(['namespace' => 'Api', 'middleware' => 'auth', 'prefix' => 'admin/api'], function () {
     Route::any('/QueryStatus', 'AlipayTradeQueryController@QueryStatus')->name("QueryStatus");
     Route::any('/AlipayShopCategory', 'AlipayShopCategoryController@query')->name("AlipayShopCategory");
-    Route::any('/getCategory', 'AlipayShopCategoryController@getCategory')->name("getCategory");
     /*Route::any('/getProvince', 'ProvinceCityController@getProvince')->name("getProvince");
     Route::any('/getCity', 'ProvinceCityController@getCity')->name("getCity");*/
     Route::any('/upload', 'PublicController@upload')->name("upload");
@@ -99,8 +117,6 @@ Route::group(['namespace' => 'Api', 'middleware' => 'auth', 'prefix' => 'admin/a
     Route::any('/ApplyOrderBatchQuery', 'AlipayQueryController@ApplyOrderBatchQuery')->name("ApplyOrderBatchQuery");
     Route::any('/ShopQueryDetail', 'AlipayQueryController@ShopQueryDetail')->name("ShopQueryDetail");
 });
-
-
 //微信
 Route::group(['namespace' => 'Weixin', 'prefix' => 'admin/weixin'], function () {
     Route::any('/server', 'ServerController@server');
@@ -112,7 +128,7 @@ Route::group(['namespace' => 'Weixin', 'prefix' => 'admin/weixin'], function () 
     Route::any('/ordernotify', 'WeixinPayController@ordernotify');
 });
 //需要登陆
-Route::group(['namespace' => 'Weixin','middleware' => 'auth', 'prefix' => 'admin/weixin'], function () {
+Route::group(['namespace' => 'Weixin', 'middleware' => 'auth', 'prefix' => 'admin/weixin'], function () {
     //服务商设置
     Route::get('/spset', 'ServiceProviderController@spset')->name("spset");
     Route::post('/spsetPost', 'ServiceProviderController@spsetPost')->name("spsetPost");
@@ -124,4 +140,44 @@ Route::group(['namespace' => 'Weixin','middleware' => 'auth', 'prefix' => 'admin
     Route::post('/WxEditShopPost', 'ShopsListsController@WxEditShopPost')->name("WxEditShopPost");
     Route::get('/WxPayQr', 'ShopsListsController@WxPayQr')->name("WxPayQr");
     Route::get('/WxOrder', 'ShopsListsController@WxOrder')->name("WxOrder");
+});
+
+//支付宝微信 二码合一需要登陆
+Route::group(['namespace' => 'AlipayWeixin', 'middleware' => 'auth', 'prefix' => 'admin/alipayweixin'], function () {
+    //服务商设置
+    Route::get('/AlipayWexinLists', 'AlipayWeixinController@AlipayWexinLists')->name("AlipayWexinLists");
+    Route::get('/addAliPayWeixinStore', 'AlipayWeixinController@addAliPayWeixinStore')->name("addAliPayWeixinStore");
+    Route::post('/addAliPayWeixinStorePost', 'AlipayWeixinController@addAliPayWeixinStorePost')->name("addAliPayWeixinStorePost");
+    Route::post('/delAlipayWexin', 'AlipayWeixinController@delAlipayWexin')->name("delAlipayWexin");
+    Route::get('/qr', 'AlipayWeixinController@qr');
+
+});
+
+//平安银行
+Route::group(['namespace' => 'PingAn', 'middleware' => 'auth', 'prefix' => 'admin/pingan'], function () {
+    Route::get('/index', 'StoreController@index')->name('PingAnStoreIndex');
+    Route::get('/add', 'StoreController@add')->name('PingAnStoreAdd');
+    Route::post('/addPost', 'StoreController@addpost')->name('PingAnStoreAddPost');
+    Route::post('/DelPinanStore', 'StoreController@DelPinanStore')->name('DelPinanStore');
+    Route::get('/SetStore', 'StoreController@SetStore')->name('SetStore');
+    Route::post('/SetStorePost', 'StoreController@SetStorePost')->name('SetStorePost');
+    Route::get('/setMerchantRate', 'StoreController@setMerchantRate')->name('setMerchantRate');
+    Route::post('/setMerchantRatePost', 'StoreController@setMerchantRatePost')->name('setMerchantRatePost');
+    Route::get('/PingAnStoreQR', 'StoreController@PingAnStoreQR')->name('PingAnStoreQR');
+
+    //通道配置模块
+    Route::get('/pinganconfig', 'PingAnConfigController@pinganconfig')->name('pinganconfig');
+    Route::post('/savepinganconfig', 'PingAnConfigController@savepinganconfig')->name('savepinganconfig');
+
+
+});
+//商户自助提交
+Route::group(['namespace' => 'PingAn', 'prefix' => 'admin/pingan'], function () {
+    Route::get('/autoStore', 'StoreController@autoStore')->name('autoStore');
+    Route::post('/autoStorePost', 'StoreController@autoStorePost')->name('autoStorePost');
+    Route::get('/success', 'StoreController@success')->name('PingAnSuccess');
+    Route::get('/autom', 'StoreController@autom')->name('autom');
+    Route::post('/automPost', 'StoreController@automPost')->name('automPost');
+
+
 });
