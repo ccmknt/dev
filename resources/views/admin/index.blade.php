@@ -14,7 +14,7 @@
                                 <span class="clear">
                                     <span class="block m-t-xs" style="font-size:20px;">
                                         <i class="fa fa-area-chart"></i>
-                                        <strong class="font-bold">南京有梦想网络科技有限公司</strong>
+                                        <strong class="font-bold">店铺管理系统</strong>
                                     </span>
                                 </span>
                             </a>
