@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\AlipayOpen;
 
+use App\App;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -26,9 +27,11 @@ class HomeController extends Controller
     {
         return view('admin.index');
     }
-   //后台主页
-    public function home(){
 
-       return view('admin.alipayopen.home');
+    //后台主页
+    public function home()
+    {
+        $data = App::where('id', 1)->first();
+        return view('admin.alipayopen.home', compact('data'));
     }
 }
