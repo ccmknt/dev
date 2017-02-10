@@ -19,7 +19,7 @@
     <script src="{{asset('/js/plugins/layer/layer.min.js')}}" type="text/javascript"></script>
     <script src="{{asset('/js/ajaxfileupload.js')}}" type="text/javascript"></script>
 </head>
-<body class="fixed-sidebar full-height-layout gray-bg">
+<body class="fixed-sidebar full-height-layout gray-bg  pace-done">
 @yield('content')
 <!-- 全局js -->
 

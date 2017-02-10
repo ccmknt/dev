@@ -58,7 +58,8 @@ class AppController extends Controller
         $versionInfo = $this->https_request('http://app.umxnt.com/api/IsvQuery', $post_data);
         $data = json_decode($versionInfo, true);
         if ($data['status'] == 200) {
-            $fileTemp = app_path() . '/fileTemp/';
+            $fileTemp = public_path() . '/fileTemp/';
+            !is_dir($fileTemp) && @mkdir($fileTemp,0777,true);
             $file = $fileTemp . 'update.zip';
             $sql = base_path() . '/sql.sql';
             @unlink($file);
@@ -71,7 +72,7 @@ class AppController extends Controller
             } catch (\Exception $exception) {
                 return json_encode([
                     'status' => 500,
-                    'msg' => '解压文件出错'
+                    'msg' => '解压文件出错!请检查文件目录权限'
                 ]);
             }
             if ($re) {
@@ -213,7 +214,7 @@ class AppController extends Controller
         //获取远程文件所采用的方法
         if ($type) {
             $ch = curl_init();
-            $timeout = 50;
+            $timeout = 500;
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);

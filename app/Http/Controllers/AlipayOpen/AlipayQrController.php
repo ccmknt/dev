@@ -11,6 +11,7 @@ namespace App\Http\Controllers\AlipayOpen;
 
 use App\Models\AlipayAppOauthUsers;
 use App\Models\AlipayIsvConfig;
+use App\Models\AlipayShopLists;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 
@@ -21,14 +22,14 @@ class AlipayQrController extends AlipayOpenController
     public function Skm(Request $request)
     {
         $u_id = $request->get('id');//这个是系统商户列表的id
+        $store_name=AlipayShopLists::where('id',$u_id)->first()->main_shop_name;
         $config = AlipayIsvConfig::where('id', 1)->first();
         if ($config) {
             $config = $config->toArray();
         }
         $config['app_auth_url'] = Config::get('alipayopen.app_auth_url');
-
         $code_url = $config['app_auth_url'] . '?app_id=' . $config['app_id'] . "&redirect_uri=" . $config['callback'] . '&scope=auth_base&state=SXD_' . $u_id;
-        return view('admin.alipayopen.skm', compact('code_url'));
+        return view('admin.alipayopen.skm', compact('code_url','store_name'));
 
 
     }
@@ -49,7 +50,7 @@ class AlipayQrController extends AlipayOpenController
         }
         $config['app_auth_url'] = Config::get('alipayopen.app_auth_url');
         $code_url = $config['app_auth_url'] . '?app_id=' . $config['app_id'] . "&redirect_uri=" . $config['callback'] . '&scope=auth_base&state=OSK_' . $user_id;
-        return view('admin.alipayopen.skm', compact('code_url', 'auth_shop_name'));
+        return view('admin.alipayopen.onlyskm', compact('code_url', 'auth_shop_name'));
 
     }
 }

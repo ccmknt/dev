@@ -44,6 +44,14 @@
                         AlipayJSBridge.call("tradePay", {
                             tradeNO: data.trade_no
                         }, function (result) {
+                            //更新状态
+                            $.post("{{route('OrderStatus')}}", {
+                                        trade_no: data.trade_no,
+                                        resultCode: result.resultCode,
+                                        _token: $("#token").val()
+                                    },
+                                    function (dataStatus) {
+                                    }, "json");
                             //付款成功
                             if (result.resultCode == "9000") {
                                 window.location.href = "{{url('admin/alipayopen/PaySuccess?price=')}}" + $("#total_amount").val();

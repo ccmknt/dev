@@ -20,6 +20,7 @@ class CreateAlipayShopListsTable extends Migration
             $table->string('shop_id');
             $table->integer('user_id');
             $table->string('apply_id');
+            $table->string('audit_status');
             $table->string('app_auth_token');
             $table->string('category_id');
             $table->string('brand_name');

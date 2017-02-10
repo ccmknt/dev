@@ -29,16 +29,17 @@ class StoreController extends AlipayOpenController
     {
         $auth = Auth::user()->can('store');
         if (!$auth) {
-            echo '你没有权限操作！';die;
+            echo '你没有权限操作！';
+            die;
         }
-        $data = AlipayShopLists::where('user_id',Auth::user()->id)->orderBy('created_at', 'desc')->get();
+        $data = AlipayShopLists::where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->get();
         if (Auth::user()->hasRole('admin')) {
             $data = AlipayShopLists::orderBy('created_at', 'desc')->get();
         }
-        if ($data->isEmpty()){
-            $paginator="";
-            $datapage="";
-        }else{
+        if ($data->isEmpty()) {
+            $paginator = "";
+            $datapage = "";
+        } else {
             $data = $data->toArray();
             //非数据库模型自定义分页
             $perPage = 9;//每页数量
@@ -57,7 +58,7 @@ class StoreController extends AlipayOpenController
             $datapage = $paginator->toArray()['data'];
         }
 
-        return view('admin.alipayopen.store.index', compact('datapage','paginator'));
+        return view('admin.alipayopen.store.index', compact('datapage', 'paginator'));
     }
 
     /**
@@ -122,7 +123,7 @@ class StoreController extends AlipayOpenController
             "auth_letter" => "" . $request->get('auth_letter') . "",
             "is_operating_online" => "" . $request->get('is_operating_online') . "",
             "online_url" => "" . $request->get('online_url') . "",
-            "operate_notify_url" => "" . $request->get('operate_notify_url') . "",
+            "operate_notify_url" => "" . url('/operate_notify_url') . "",
             "implement_id" => "" . $request->get('implement_id') . "",
             "no_smoking" => "" . $request->get('no_smoking') . "",
             "box" => "" . $request->get('box') . "",
@@ -130,7 +131,7 @@ class StoreController extends AlipayOpenController
             "other_authorization" => "" . $request->get('other_authorization') . "",
             "licence_expires" => "" . $request->get('licence_expires') . "",
             "op_role" => "ISV",
-            "biz_version" => "2.0",
+            "biz_version" => "2.0",//这个参数很重要
         ];
         $shop = AlipayShopLists::where('store_id', $store_id)->first();
         if ($shop) {
@@ -175,7 +176,7 @@ class StoreController extends AlipayOpenController
             "\"auth_letter\":\"" . $request->get('auth_letter') . "\"," .
             "\"is_operating_online\":\"" . $request->get('is_operating_online') . "\"," .
             "\"online_url\":\"" . $request->get('online_url') . "\"," .
-            "\"operate_notify_url\":\"" . $config['operate_notify_url'] . "\"," .
+            "\"operate_notify_url\":\"" . url('/operate_notify_url') . "\"," .
             "\"implement_id\":\"" . $request->get('implement_id') . "\"," .
             "\"no_smoking\":\"" . $request->get('no_smoking') . "\"," .
             "\"box\":\"" . $request->get('box') . "\"," .
@@ -185,26 +186,24 @@ class StoreController extends AlipayOpenController
             "\"op_role\":\"ISV\"," .
             "\"biz_version\":\"2.0\"" .
             "  }");
-        try {
-            $result = $aop->execute($requests, NULL, $request->get('app_auth_token'));
-            $responseNode = str_replace(".", "_", $requests->getApiMethodName()) . "_response";
-        } catch (\Exception $exception) {
-            return $exception;
-        }
-        if ($result->$responseNode->code == 1000) {
+        $result = $aop->execute($requests, NULL, $request->get('app_auth_token'));
+        $responseNode = str_replace(".", "_", $requests->getApiMethodName()) . "_response";
+        if ($result->$responseNode->code == 10000) {
             //存储数据库
             $updata = [
                 "apply_id" => $result->$responseNode->apply_id,
             ];
             AlipayShopLists::where('store_id', $store_id)->update($updata);
+            $re = [
+                'code' => $result->$responseNode->code,
+                'sub_msg' => $result->$responseNode->msg,
+            ];
+        } else {
+            $re = [
+                'code' => $result->$responseNode->code,
+                'sub_msg' => $result->$responseNode->sub_msg,
+            ];
         }
-        // $resultCode = $result->$responseNode->code;
-        $re = [
-            'code' => $result->$responseNode->code,
-            'msg' => $result->$responseNode->msg,
-            'sub_code' => $result->$responseNode->sub_code,
-            'sub_msg' => $result->$responseNode->sub_msg,
-        ];
         return json_encode($re);
     }
 
@@ -238,7 +237,7 @@ class StoreController extends AlipayOpenController
         $shop['audit_images2'] = $audit_images[1];
         $shop['audit_images3'] = $audit_images[2];
         //地区 省
-        $province = ProvinceCity::where('areaParentId',1)->get();
+        $province = ProvinceCity::where('areaParentId', 1)->get();
         $city = ProvinceCity::where('areaCode', $shop['city_code'])->get();
         $district = ProvinceCity::where('areaCode', $shop['district_code'])->get();
         if ($province) {

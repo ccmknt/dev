@@ -485,10 +485,16 @@
                     },
                     function (result) {
                         if (result.code == 10000) {
-                            layer.alert('提交保存成功！等待口碑支付宝审核！', {icon: 6});
-                            window.location.href="{{url('/admin/alipayopen/store')}}";
+                            //询问框
+                            layer.confirm('保存成功！等待口碑审核！', {
+                                btn: ['列表页', '当前页'] //按钮
+                            }, function () {
+                                window.location.href = "{{url('/admin/alipayopen/store')}}";
+                            }, function () {
+                                layer.msg('正在浏览提交的店铺资料');
+                            });
                         } else {
-                            layer.alert(result.sub_msg, {icon: 5});
+                            layer.msg(result.sub_msg);
                         }
                     }, "json")
         }

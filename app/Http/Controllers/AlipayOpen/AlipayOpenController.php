@@ -26,11 +26,11 @@ class AlipayOpenController extends Controller
         //软件生成的应用私钥字符串
         $c->rsaPrivateKey = $config['rsaPrivateKey'];
         //软件生成的应用私钥文件路径
-        $c->rsaPrivateKeyFilePath = $config['rsaPrivateKeyFilePath'];
+       // $c->rsaPrivateKeyFilePath = $config['rsaPrivateKeyFilePath'];
         //软件生成的应用公钥路径
-        $c->rsaPublicKeyFilePath = $config['rsaPublicKeyFilePath'];
+      //  $c->rsaPublicKeyFilePath = $config['rsaPublicKeyFilePath'];
         //开发平台后台的支付宝rsa公钥(不是应用公钥)
-        $c->alipayrsaPublicKey = $config['alipayrsaPublicKey'];
+      //  $c->alipayrsaPublicKey = $config['alipayrsaPublicKey'];
         $c->format = "json";
         $c->charset = "GBK";
         $c->version="2.0";

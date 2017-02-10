@@ -18,5 +18,6 @@ class VerifyCsrfToken extends BaseVerifier
      */
     protected $except = [
         'admin/weixin/*',
+        '/operate_notify_url',
     ];
 }

@@ -17,21 +17,19 @@ use Illuminate\Http\Request;
 class AlipayTradeCreateController extends BaseController
 {
     /**
-     * 统一收单交易创建接口
+     * 统一收单交易创建接口 有门店
      */
-    public function AlipayTradeCreate(Request $request)
+    public function AlipayqrCreate(Request $request)
     {
         //0.接受参数
         $total_amount = $request->get('total_amount');
         $u_id = $request->get('u_id');
-
         $shop = AlipayShopLists::where('id', $u_id)->first();
         if ($shop) {
             $shop = $shop->toArray();
-        }else{
-            $shop['main_shop_name']="商户";
+        } else {
+            $shop['main_shop_name'] = "商户";
         }
-
         $config = AlipayIsvConfig::where('id', 1)->first();
         if ($config) {
             $config = $config->toArray();
@@ -62,6 +60,7 @@ class AlipayTradeCreateController extends BaseController
             "\"price\":" . $total_amount . "" .
             "}]," .
             "\"store_id\":\"" . $shop['store_id'] . "\"," .
+            "\"alipay_store_id\":\"" . $shop['shop_id'] . "\"," .
             "\"extend_params\":{" .
             "\"sys_service_provider_id\":\"" . $config['pid'] . "\"" .
             /*  "\"hb_fq_num\":\"3\"," .
@@ -98,8 +97,9 @@ class AlipayTradeCreateController extends BaseController
         return json_encode($data);
 
     }
+
     /**
-     * 统一收单交易创建接口
+     * 统一收单交易创建接口 无门店
      */
     public function AlipayOqrCreate(Request $request)
     {
@@ -109,8 +109,8 @@ class AlipayTradeCreateController extends BaseController
         $shop = AlipayAppOauthUsers::where('user_id', $u_id)->first();
         if ($shop) {
             $shop = $shop->toArray();
-        }else{
-            $shop['auth_shop_name']="商户";
+        } else {
+            $shop['auth_shop_name'] = "商户";
         }
         $config = AlipayIsvConfig::where('id', 1)->first();
         if ($config) {
@@ -141,7 +141,7 @@ class AlipayTradeCreateController extends BaseController
             " \"quantity\":1," .
             "\"price\":" . $total_amount . "" .
             "}]," .
-            "\"store_id\":\"" . 'o'.$shop['user_id'] . "\"," .
+            "\"store_id\":\"" . 'o' . $shop['user_id'] . "\"," .
             "\"extend_params\":{" .
             "\"sys_service_provider_id\":\"" . $config['pid'] . "\"" .
             /*  "\"hb_fq_num\":\"3\"," .
@@ -160,7 +160,7 @@ class AlipayTradeCreateController extends BaseController
                 "out_trade_no" => $out_trade_no,
                 "status" => "",
                 "total_amount" => $total_amount,
-                'store_id' => 'o'.$shop['user_id'],
+                'store_id' => 'o' . $shop['user_id'],
             ];
             AlipayTradeQuery::create($insert);
             $data = [
@@ -177,6 +177,16 @@ class AlipayTradeCreateController extends BaseController
         }
         return json_encode($data);
 
+    }
+
+    public function OrderStatus(Request $request)
+    {
+        $trade_no = $request->get('trade_no');
+        $resultCode = $request->get('resultCode');
+        AlipayTradeQuery::where('trade_no', $trade_no)->update(['status' => $resultCode]);
+        return json_encode([
+            'status' => 1,
+        ]);
     }
 
 }

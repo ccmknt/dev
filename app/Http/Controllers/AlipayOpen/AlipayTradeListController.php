@@ -10,21 +10,74 @@ namespace App\Http\Controllers\AlipayOpen;
 
 
 use App\Models\AlipayAppOauthUsers;
+use App\Models\AlipayShopLists;
 use App\Models\AlipayTradeQuery;
 use Alipayopen\Sdk\Request\AlipayTradeQueryRequest;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use phpDocumentor\Reflection\Types\Null_;
 
 class AlipayTradeListController extends AlipayOpenController
 {
+
     public function index(Request $request)
     {
         $auth = Auth::user()->can('alipaytradelist');
         if (!$auth) {
-            echo '你没有权限操作！';die;
+            echo '你没有权限操作！';
+            die;
+        }
+        /* $query = DB::table('alipay_shop_lists')->join('alipay_trade_queries', 'alipay_shop_lists.store_id', '=', 'alipay_trade_queries.store_id')->get();*/
+        $query = AlipayTradeQuery::all();
+        if ($query) {
+            $query = $query->toArray();
+        } else {
+            $query = [];
+        }
+        $data = [];
+        foreach ($query as $k => $value) {
+            $data[] = $value;
+            $frist = substr($value['store_id'], 0, 1);
+            if ($frist == 'o') {
+                $store = AlipayAppOauthUsers::where('user_id', substr($value['store_id'], 1))->first();
+                $data[$k]['store_name'] = $store->auth_shop_name;
+                $data[$k]['branch_shop_name'] = '';
+
+            }
+            if ($frist == 's') {
+                $store = AlipayShopLists::where('store_id', $value['store_id'])->first();
+                $data[$k]['store_name'] = $store->main_shop_name;
+                $data[$k]['branch_shop_name'] = $store->branch_shop_name;
+            }
+
+        }
+        //非数据库模型自定义分页
+        $perPage = 8;//每页数量
+        if ($request->has('page')) {
+            $current_page = $request->input('page');
+            $current_page = $current_page <= 0 ? 1 : $current_page;
+        } else {
+            $current_page = 1;
+        }
+        $item = array_slice($data, ($current_page - 1) * $perPage, $perPage); //注释1
+        $total = count($data);
+        $paginator = new LengthAwarePaginator($item, $total, $perPage, $current_page, [
+            'path' => Paginator::resolveCurrentPath(),
+            'pageName' => 'page',
+        ]);
+        $datapage = $paginator->toArray()['data'];
+        return view('admin.alipayopen.alipaytradelist', compact('datapage', 'paginator'));
+    }
+
+    public function index1(Request $request)
+    {
+        $auth = Auth::user()->can('alipaytradelist');
+        if (!$auth) {
+            echo '你没有权限操作！';
+            die;
         }
         $query = AlipayTradeQuery::orderBy('created_at', 'desc')->get();
         //没有订单
@@ -60,12 +113,6 @@ class AlipayTradeListController extends AlipayOpenController
                         ]);
                         $datapage = $paginator->toArray()['data'];
                     }
-                    //无效订单
-                    else {
-                        $paginator = "";
-                        $datapage = "";
-                    }
-
                 }
             }
 
@@ -74,7 +121,7 @@ class AlipayTradeListController extends AlipayOpenController
     }
 
     /**
-     * 查询交易
+     * 查询交易 主动查询
      */
     public function QueryStatus($trade_no, $app_auth_token)
     {

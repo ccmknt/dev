@@ -6,7 +6,7 @@
         <input type="hidden" id="token" value="{{csrf_token()}}">
         <div class="ibox float-e-margins">
             <div class="ibox-title">
-                <h5>添加配置信息</h5>
+                <h5>添加商户信息</h5>
             </div>
             <div class="ibox-content">
                 <div class="row">

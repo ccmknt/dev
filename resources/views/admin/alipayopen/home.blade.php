@@ -177,6 +177,8 @@
                     function (data) {
                         if (data.status == 1) {
                             $("#update").append('<button type="button" onclick="updateFile()" class="btn btn-outline btn-success">更新系统</button>');
+                        }else {
+                            layer.alert(data.msg, {icon: 5});
                         }
                     }, 'json');
         }

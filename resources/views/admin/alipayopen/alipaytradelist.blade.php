@@ -22,14 +22,15 @@
                             style="width: 308px;" aria-label="平台：激活排序列升序">店铺ID
                         </th>
                         <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1"
+                            style="width: 144px;" aria-label="CSS等级：激活排序列升序">商户名称
+                        </th>
+                        <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1"
                             style="width: 142px;" aria-label="引擎版本：激活排序列升序">创建时间
                         </th>
                         <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1"
                             style="width: 144px;" aria-label="CSS等级：激活排序列升序">更新时间
                         </th>
-                        <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1"
-                            style="width: 144px;" aria-label="CSS等级：激活排序列升序">买家账号
-                        </th>
+
                         <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1"
                             style="width: 144px;" aria-label="CSS等级：激活排序列升序">总金额
                         </th>
@@ -45,18 +46,16 @@
                                 <td class=''>{{$v['out_trade_no']}}</td>
                                 <td class=''>{{$v['trade_no']}}</td>
                                 <td class=''>{{$v['store_id']}}</td>
+                                <td class=''>{{$v['store_name']}}{{$v['branch_shop_name']}}</td>
                                 <td class=''>{{$v['created_at']}}</td>
                                 <td class=''>{{$v['updated_at']}}</td>
-                                <td class=''>{{$v['buyer_logon_id']}}</td>
                                 <td class=''>{{$v['total_amount']}}</td>
-                                @if($v['trade_status']=="WAIT_BUYER_PAY")
+                                @if($v['status']=="9000")
+                                    <td style="color: green">
+                                        <button type="button" class="btn btn-outline btn-success">付款成功</button>
+                                    </td>
+                                @else
                                     <td class=''>等待买家付款</td>
-                                @elseif($v['trade_status']=="TRADE_CLOSED")
-                                    <td class=''>未付款交易超时关闭</td>
-                                @elseif($v['trade_status']=="TRADE_FINISHED")
-                                    <td class=''>交易结束</td>
-                                @elseif($v['trade_status']=="TRADE_SUCCESS")
-                                    <td style="color: green"><button type="button" class="btn btn-outline btn-success">付款成功</button></td>
                                 @endif
                             </tr>
                         @endforeach

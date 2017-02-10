@@ -23,7 +23,7 @@ class AlipayCreateOrderController extends AlipayOpenController
         if ($shop) {
             $shop = $shop->toArray();
         }
-        return view('admin.alipayopen.createorder', compact('shop'));
+        return view('admin.alipayopen.create_qr_order', compact('shop'));
     }
    //仅收款码金额界面 无店铺
     public function alipay_oqr_create(Request $request)
