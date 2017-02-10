@@ -11,13 +11,15 @@ namespace App\Http\Controllers\AlipayOpen;
 
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class UsersController extends AlipayOpenController
 {
 
-    public function users()
+    public function users(Request $request)
     {
         $auth = Auth::user()->can('users');
         if (!$auth) {
@@ -26,9 +28,24 @@ class UsersController extends AlipayOpenController
         }
         $user = User::all();
         if ($user) {
-            $user = $user->toArray();
+            $data = $user->toArray();
         }
-        return view('admin.alipayopen.users.users', compact("user"));
+        //非数据库模型自定义分页
+        $perPage = 8;//每页数量
+        if ($request->has('page')) {
+            $current_page = $request->input('page');
+            $current_page = $current_page <= 0 ? 1 : $current_page;
+        } else {
+            $current_page = 1;
+        }
+        $item = array_slice($data, ($current_page - 1) * $perPage, $perPage); //注释1
+        $total = count($data);
+        $paginator = new LengthAwarePaginator($item, $total, $perPage, $current_page, [
+            'path' => Paginator::resolveCurrentPath(),
+            'pageName' => 'page',
+        ]);
+        $datapage = $paginator->toArray()['data'];
+        return view('admin.alipayopen.users.users', compact('datapage', 'paginator'));
     }
 
     //添加用户
@@ -127,4 +144,5 @@ class UsersController extends AlipayOpenController
             return redirect(route('users'));
         }
     }
+
 }

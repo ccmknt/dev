@@ -1,8 +1,8 @@
 @extends('layouts.public')
 @section('content')
     <div class="col-sm-12">
-        <a class="btn btn-white btn-bitbucket" href="{{url('/register')}}">
-            <i class="fa fa-user-md"></i>
+        <a  href="{{url('/register')}}">
+            <button type="button" class="btn btn-w-m btn-success">添加员工</button>
         </a>
         <div class="ibox float-e-margins">
             <div class="ibox-title">
@@ -22,7 +22,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach($user as $v)
+                    @foreach($datapage as $v)
                         <tr>
                             <td>{{$v['id']}}</td>
                             <td>{{$v['name']}}</td>
@@ -45,7 +45,14 @@
                     @endforeach
                     </tbody>
                 </table>
-
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="dataTables_paginate paging_simple_numbers"
+                     id="DataTables_Table_0_paginate">
+                    {{$paginator->render()}}
+                </div>
             </div>
         </div>
     </div>
