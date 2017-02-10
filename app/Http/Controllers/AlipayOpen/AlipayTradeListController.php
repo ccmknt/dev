@@ -43,17 +43,28 @@ class AlipayTradeListController extends AlipayOpenController
             $frist = substr($value['store_id'], 0, 1);
             if ($frist == 'o') {
                 $store = AlipayAppOauthUsers::where('user_id', substr($value['store_id'], 1))->first();
-                $data[$k]['store_name'] = $store->auth_shop_name;
-                $data[$k]['branch_shop_name'] = '';
-
+                if($store){
+                    $data[$k]['store_name'] = $store->auth_shop_name;
+                    $data[$k]['branch_shop_name'] = '';
+                }else{
+                    $data[$k]['store_name'] = substr($value['store_id'], 1).'_店铺';
+                    $data[$k]['branch_shop_name'] = '';
+                }
             }
             if ($frist == 's') {
                 $store = AlipayShopLists::where('store_id', $value['store_id'])->first();
-                $data[$k]['store_name'] = $store->main_shop_name;
-                $data[$k]['branch_shop_name'] = $store->branch_shop_name;
+                if ($store) {
+                    $data[$k]['store_name'] = $store->main_shop_name;
+                    $data[$k]['branch_shop_name'] = $store->branch_shop_name;
+                }else{
+                    $data[$k]['store_name'] = substr($value['store_id'], 1).'_店铺';
+                    $data[$k]['branch_shop_name'] = '';
+                }
+
             }
 
         }
+
         //非数据库模型自定义分页
         $perPage = 8;//每页数量
         if ($request->has('page')) {
