@@ -20,6 +20,7 @@
                                     <th>门店名称</th>
                                     <th>地址</th>
                                     <th>联系方式</th>
+                                    <th>归属员工</th>
                                     <th>状态</th>
                                     <th>操作</th>
 
@@ -29,30 +30,31 @@
                                 @if($datapage)
                                     @foreach($datapage as $v)
                                         <tr>
-                                            <td>{{$v['store_id']}}</td>
-                                            <td><span class="pie">{{$v['licence_name']}}</span></td>
-                                            <td><span class="pie">{{$v['main_shop_name']}}</span></td>
-                                            <td>{{$v['address']}}</td>
-                                            <td><span class="pie">{{$v['contact_number']}}</span></td>
-                                            @if($v['apply_id']=="")
+                                            <td>{{$v->store_id}}</td>
+                                            <td><span class="pie">{{$v->licence_name}}</span></td>
+                                            <td><span class="pie">{{$v->main_shop_name}}</span></td>
+                                            <td>{{$v->address}}</td>
+                                            <td><span class="pie">{{$v->contact_number}}</span></td>
+                                            <td><span class="pie">{{$v->name}}</span></td>
+                                            @if($v->apply_id=="")
                                                 <td>
                                                     <button type="button" class="btn btn-outline btn-warning">未提交到口碑
                                                     </button>
                                                 </td>
                                             @endif
-                                            @if($v['apply_id']&&$v['audit_status']=="")
+                                            @if($v->apply_id&&$v->audit_status=="")
                                                 <td>
                                                     <button type="button" class="btn btn-outline btn-warning">审核中
                                                     </button>
                                                 </td>
                                             @endif
-                                            @if($v['audit_status']=='AUDITING')
+                                            @if($v->audit_status=='AUDITING')
                                                 <td>
                                                     <button type="button" class="btn btn-outline btn-warning">审核中
                                                     </button>
                                                 </td>
                                             @endif
-                                            @if($v['audit_status']=='AUDIT_FAILED')
+                                            @if($v->audit_status=='AUDIT_FAILED')
                                                 <td>
                                                     <button type="button" onclick="info()"
                                                             class="btn btn-outline btn-danger">审核驳回
@@ -60,15 +62,15 @@
                                                 </td>
                                             @endif
 
-                                            @if($v['audit_status']=='AUDIT_SUCCESS')
+                                            @if($v->audit_status=='AUDIT_SUCCESS')
                                                 <td>
                                                     <button type="button" class="btn btn-outline btn-success">开店成功
                                                     </button>
                                                 </td>
                                             @endif
-                                            @if($v['audit_status']=='AUDIT_FAILED'||$v['apply_id']=="")
+                                            @if($v->audit_status=='AUDIT_FAILED'||$v->apply_id=="")
                                                 <th>
-                                                    <a href="{{'/admin/alipayopen/store/'.$v['id'].'/edit'}}">
+                                                    <a href="{{'/admin/alipayopen/store/'.$v->id.'/edit'}}">
                                                         <button type="button" class="btn btn-info">重新提交</button>
                                                     </a>
                                                     {{-- <a href="{{url('admin/alipayopen/skm?id='.$v['id'])}}">
@@ -76,9 +78,9 @@
                                                      <a href="">
                                                          <button type="button" class="btn">固定金额收款码</button></a>--}}
                                                 </th>
-                                            @elseif($v['shop_id'])
+                                            @elseif($v->shop_id)
                                                 <th>
-                                                    <a href="{{url('admin/alipayopen/skm?id='.$v['id'])}}">
+                                                    <a href="{{url('admin/alipayopen/skm?id='.$v->id)}}">
                                                         <button type="button" class="btn btn-info">店铺收款码</button>
                                                     </a>
                                                     <a href="">

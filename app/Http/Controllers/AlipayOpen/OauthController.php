@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Alipayopen\Sdk\AopClient;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
 class OauthController extends AlipayOpenController
@@ -191,9 +192,9 @@ class OauthController extends AlipayOpenController
             die;
         }
         //
-        $data = AlipayAppOauthUsers::where('promoter_id', Auth::user()->id)->orderBy('created_at', 'desc')->get();
+        $data =DB::table('users')->select('users.name', 'alipay_app_oauth_users.*')->orderBy('updated_at','desc')->where('promoter_id',Auth::user()->id)->join('alipay_app_oauth_users', 'alipay_app_oauth_users.promoter_id', '=', 'users.id')->get();
         if (Auth::user()->hasRole('admin')) {
-            $data = AlipayAppOauthUsers::orderBy('created_at', 'desc')->get();
+            $data = DB::table('users')->select('users.name', 'alipay_app_oauth_users.*')->orderBy('updated_at','desc')->join('alipay_app_oauth_users', 'alipay_app_oauth_users.promoter_id', '=', 'users.id')->get();
         }
         if ($data->isEmpty()) {
             $paginator = "";

@@ -17,6 +17,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 
 class StoreController extends AlipayOpenController
 {
@@ -32,9 +33,10 @@ class StoreController extends AlipayOpenController
             echo '你没有权限操作！';
             die;
         }
-        $data = AlipayShopLists::where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->get();
+        $data =DB::table('alipay_shop_lists')->select('alipay_shop_lists.*','users.name')->orderBy('updated_at','desc')->where('user_id',Auth::user()->id)->join('users', 'users.id', '=', 'alipay_shop_lists.user_id')->get();
+       // $data = AlipayShopLists::where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->get();
         if (Auth::user()->hasRole('admin')) {
-            $data = AlipayShopLists::orderBy('created_at', 'desc')->get();
+            $data =DB::table('alipay_shop_lists')->select('alipay_shop_lists.*','users.name')->orderBy('updated_at','desc')->join('users', 'users.id', '=', 'alipay_shop_lists.user_id')->get();
         }
         if ($data->isEmpty()) {
             $paginator = "";
