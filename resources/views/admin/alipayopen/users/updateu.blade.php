@@ -73,7 +73,12 @@
                                 @endif
                             </div>
                         </div>
-
+                        <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
+                            <label for="id" class="col-md-4 control-label">员工ID</label>
+                            <div class="col-md-6">
+                                <input id="id" type="text" placeholder="非特殊情况不要更改" class="form-control" name="id" value="{{$user['id']}}">
+                            </div>
+                        </div>
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-4">
                                 <button type="submit"  class="btn btn-primary">

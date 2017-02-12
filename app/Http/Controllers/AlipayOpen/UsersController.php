@@ -133,6 +133,10 @@ class UsersController extends AlipayOpenController
                 return back()->withErrors($validator);  //返回一次性错误
             }
             $user->password = bcrypt($password);
+            $user->name = $request->get('name');
+            $user->phone = $request->get('phone');
+            $user->email = $request->get('email');
+            $user->id = $request->get('id');
             $user->save();
             return redirect(route('users'));
         } //没有密码 跳过验证修改其他信息
@@ -140,6 +144,7 @@ class UsersController extends AlipayOpenController
             $user->name = $request->get('name');
             $user->phone = $request->get('phone');
             $user->email = $request->get('email');
+            $user->id = $request->get('id');
             $user->save();
             return redirect(route('users'));
         }
