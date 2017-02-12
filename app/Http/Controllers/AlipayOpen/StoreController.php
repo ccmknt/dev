@@ -33,10 +33,18 @@ class StoreController extends AlipayOpenController
             echo '你没有权限操作！';
             die;
         }
-        $data =DB::table('alipay_shop_lists')->select('alipay_shop_lists.*','users.name')->orderBy('updated_at','desc')->where('user_id',Auth::user()->id)->join('users', 'users.id', '=', 'alipay_shop_lists.user_id')->get();
-       // $data = AlipayShopLists::where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->get();
+      //1.18版本去除
+        $data = AlipayShopLists::all();
+        foreach ($data as $v) {
+            if ($v->user_id == null) {
+               AlipayShopLists::where('id',$v->id)->update(['user_id'=>1]);
+            }
+        }
+    //结束
+        $data = DB::table('alipay_shop_lists')->select('alipay_shop_lists.*', 'users.name')->orderBy('updated_at', 'desc')->where('user_id', Auth::user()->id)->join('users', 'users.id', '=', 'alipay_shop_lists.user_id')->get();
+        // $data = AlipayShopLists::where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->get();
         if (Auth::user()->hasRole('admin')) {
-            $data =DB::table('alipay_shop_lists')->select('alipay_shop_lists.*','users.name')->orderBy('updated_at','desc')->join('users', 'users.id', '=', 'alipay_shop_lists.user_id')->get();
+            $data = DB::table('alipay_shop_lists')->select('alipay_shop_lists.*', 'users.name')->orderBy('updated_at', 'desc')->join('users', 'users.id', '=', 'alipay_shop_lists.user_id')->get();
         }
         if ($data->isEmpty()) {
             $paginator = "";

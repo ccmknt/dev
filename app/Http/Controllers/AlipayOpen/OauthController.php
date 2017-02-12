@@ -161,7 +161,7 @@ class OauthController extends AlipayOpenController
 
     public function userinfoinsert(Request $request)
     {
-        $user_id = $request->get('user_id');
+        $user_id = $request->get('user_id',1);
         $auth_shop_name = $request->get('auth_shop_name');
         $auth_phone = $request->get('auth_phone');
         if ($user_id) {
