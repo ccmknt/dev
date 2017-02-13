@@ -10,7 +10,7 @@
             </div>
             <div class="ibox-content">
 
-                <table class="table">
+                <table class="table" style="Word-break: break-all;">
                     <thead>
                     <tr>
                         <th>#</th>
@@ -55,7 +55,6 @@
                 </div>
             </div>
         </div>
-    </div>
 @endsection
 @section('js')
     <script>

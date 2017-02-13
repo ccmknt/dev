@@ -8,7 +8,7 @@
         </div>
         <div class="ibox-content">
             <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper form-inline" role="grid">
-                <table class="table table-striped table-bordered table-hover dataTables-example dataTable"
+                <table style="Word-break: break-all;" class="table table-striped table-bordered table-hover dataTables-example dataTable"
                        id="DataTables_Table_0" aria-describedby="DataTables_Table_0_info">
                     <thead>
                     <tr role="row">
