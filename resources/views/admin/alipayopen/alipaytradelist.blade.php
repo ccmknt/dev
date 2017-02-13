@@ -50,7 +50,7 @@
                                 <td class=''>{{$v['created_at']}}</td>
                                 <td class=''>{{$v['updated_at']}}</td>
                                 <td class=''>{{$v['total_amount']}}</td>
-                                @if($v['status']=="9000")
+                                @if($v['status']=="9000"||$v['status']=='TRADE_SUCCESS')
                                     <td style="color: green">
                                         <button type="button" class="btn btn-outline btn-success">付款成功</button>
                                     </td>

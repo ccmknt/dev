@@ -31,7 +31,7 @@ class AlipayTradeListController extends AlipayOpenController
             die;
         }
         /* $query = DB::table('alipay_shop_lists')->join('alipay_trade_queries', 'alipay_shop_lists.store_id', '=', 'alipay_trade_queries.store_id')->get();*/
-        $query = AlipayTradeQuery::all();
+        $query = AlipayTradeQuery::orderBy('updated_at','desc')->get();
         if ($query) {
             $query = $query->toArray();
         } else {
@@ -39,6 +39,14 @@ class AlipayTradeListController extends AlipayOpenController
         }
         $data = [];
         foreach ($query as $k => $value) {
+            //下一个版本去除
+            $user_id = substr($value['store_id'], 1);
+            $user = AlipayAppOauthUsers::where('user_id', $user_id)->first();
+            if ($user){
+                $data1 = json_decode($this->QueryStatus($value['trade_no'], $user->app_auth_token), true);
+                AlipayTradeQuery::where('trade_no',$data1['trade_no'])->update(['status'=>$data1['trade_status']]);
+            }
+            //结束
             $data[] = $value;
             $frist = substr($value['store_id'], 0, 1);
             if ($frist == 'o') {
@@ -64,7 +72,6 @@ class AlipayTradeListController extends AlipayOpenController
             }
 
         }
-
         //非数据库模型自定义分页
         $perPage = 8;//每页数量
         if ($request->has('page')) {
