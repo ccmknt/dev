@@ -149,7 +149,6 @@ class StoreController extends AlipayOpenController
         } else {
             AlipayShopLists::create($data);
         }
-
         //提交到口碑
         $aop = $this->AopClient();
         $aop->apiVersion = "2.0";
@@ -202,6 +201,7 @@ class StoreController extends AlipayOpenController
             //存储数据库
             $updata = [
                 "apply_id" => $result->$responseNode->apply_id,
+                "audit_status"=>""//重新提交以后去除状态
             ];
             AlipayShopLists::where('store_id', $store_id)->update($updata);
             $re = [

@@ -35,11 +35,11 @@
                                 </button>
                                 <a class="btn btn-info btn-rounded"
                                    href="{{url('admin/alipayopen/setRole?user_id='.$v['id'])}}">角色</a>
-                                @if($v['name']!="admin")
+                                @role('user')
                                     <button type="button" onclick="deleteu('{{$v['id']}}')"
                                             class="btn btn-danger btn-rounded">删除
                                     </button>
-                                @endif
+                                @endrole
                             </td>
                         </tr>
                     @endforeach
