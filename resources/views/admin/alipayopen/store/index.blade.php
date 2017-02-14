@@ -56,7 +56,7 @@
                                             @endif
                                             @if($v->audit_status=='AUDIT_FAILED')
                                                 <td>
-                                                    <button type="button" onclick="info()"
+                                                    <button type="button" onclick="info('{{$v->store_id}}')"
                                                             class="btn btn-outline btn-danger">审核驳回
                                                     </button>
                                                 </td>
@@ -115,8 +115,11 @@
 @endsection
 @section('js')
     <script>
-        function info() {
-            alert('驳回原因');
+        function info(store_id) {
+            $.post("{{route('shopNotify')}}", {store_id: store_id, _token: "{{csrf_token()}}"},
+                    function (data) {
+                        alert(data.result_desc)
+                    }, "json");
         }
     </script>
 @endsection

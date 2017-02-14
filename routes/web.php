@@ -43,7 +43,7 @@ Route::group(['namespace' => 'AlipayOpen', 'middleware' => 'auth', 'prefix' => '
     Route::get('/alipaytradelist', 'AlipayTradeListController@index')->name('alipaytradelist');
     //授权列表
     Route::get('/oauthlist', 'OauthController@oauthlist')->name('oauthlist');
-
+    Route::post('/shopNotify', 'AlipayReturnController@shopNotify')->name('shopNotify');
     //权限管理
     Route::resource('/role', 'RoleController');
     Route::resource('/permission', 'PermissionController');
