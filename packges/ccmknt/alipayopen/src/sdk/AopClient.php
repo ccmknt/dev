@@ -575,6 +575,14 @@ class AopClient
         return $this->verify($this->getSignContent($params), $sign, $rsaPublicKeyFilePath);
     }
 
+    public function rsaCheckUmxnt($params, $rsaPublicKeyFilePath,$signType="RSA2"){
+        $sign = $params['sign'];
+        $params['sign_type'] = null;
+        $params['sign'] = null;
+
+        return $this->verify($this->getSignContent($params), $sign, $rsaPublicKeyFilePath,$signType);
+    }
+
     public function rsaCheckV2($params, $rsaPublicKeyFilePath)
     {
         $sign = $params['sign'];

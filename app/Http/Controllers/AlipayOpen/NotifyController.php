@@ -15,12 +15,13 @@ use App\Models\AlipayStoreInfo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
+
 class NotifyController extends AlipayOpenController
 {
 
     public function notify(Request $request)
     {
-        Log::info($request);
+
     }
 
     //商户开店状态通知URL
@@ -30,9 +31,9 @@ class NotifyController extends AlipayOpenController
         $requestArray = $request->toArray();
         $config = AlipayIsvConfig::where('id', 1)->first();
         $alipayrsaPublicKey = $config->alipayrsaPublicKey;
-        $aop = $this->AopClient();
+        $aop = $this->AopClientNotify();
         $aop->alipayrsaPublicKey = $alipayrsaPublicKey;
-        $umxnt = $aop->rsaCheckV1($requestArray, $alipayrsaPublicKey);
+        $umxnt = $aop->rsaCheckUmxnt($requestArray, $alipayrsaPublicKey);
         Log::info('_________'.$umxnt);
         if ($umxnt) {
             $data = [

@@ -31,7 +31,7 @@ class AlipayTradeListController extends AlipayOpenController
             die;
         }
         /* $query = DB::table('alipay_shop_lists')->join('alipay_trade_queries', 'alipay_shop_lists.store_id', '=', 'alipay_trade_queries.store_id')->get();*/
-        $query = AlipayTradeQuery::orderBy('updated_at','desc')->get();
+        $query = AlipayTradeQuery::orderBy('updated_at', 'desc')->get();
         if ($query) {
             $query = $query->toArray();
         } else {
@@ -42,20 +42,22 @@ class AlipayTradeListController extends AlipayOpenController
             //下一个版本去除
             $user_id = substr($value['store_id'], 1);
             $user = AlipayAppOauthUsers::where('user_id', $user_id)->first();
-            if ($user){
+            if ($user) {
                 $data1 = json_decode($this->QueryStatus($value['trade_no'], $user->app_auth_token), true);
-                AlipayTradeQuery::where('trade_no',$data1['trade_no'])->update(['status'=>$data1['trade_status']]);
+                if ($data1['code'] == 10000) {
+                    AlipayTradeQuery::where('trade_no', $data1['trade_no'])->update(['status' => $data1['trade_status']]);
+                }
             }
             //结束
             $data[] = $value;
             $frist = substr($value['store_id'], 0, 1);
             if ($frist == 'o') {
                 $store = AlipayAppOauthUsers::where('user_id', substr($value['store_id'], 1))->first();
-                if($store){
+                if ($store) {
                     $data[$k]['store_name'] = $store->auth_shop_name;
                     $data[$k]['branch_shop_name'] = '';
-                }else{
-                    $data[$k]['store_name'] = substr($value['store_id'], 1).'_店铺';
+                } else {
+                    $data[$k]['store_name'] = substr($value['store_id'], 1) . '_店铺';
                     $data[$k]['branch_shop_name'] = '';
                 }
             }
@@ -64,8 +66,8 @@ class AlipayTradeListController extends AlipayOpenController
                 if ($store) {
                     $data[$k]['store_name'] = $store->main_shop_name;
                     $data[$k]['branch_shop_name'] = $store->branch_shop_name;
-                }else{
-                    $data[$k]['store_name'] = substr($value['store_id'], 1).'_店铺';
+                } else {
+                    $data[$k]['store_name'] = substr($value['store_id'], 1) . '_店铺';
                     $data[$k]['branch_shop_name'] = '';
                 }
 
