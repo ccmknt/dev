@@ -12,6 +12,7 @@ namespace App\Http\Controllers\AlipayOpen;
 use App\Models\AlipayIsvConfig;
 use App\Models\AlipayShopLists;
 use App\Models\AlipayStoreInfo;
+use App\Models\AlipayTradeQuery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -21,7 +22,24 @@ class NotifyController extends AlipayOpenController
 
     public function notify(Request $request)
     {
+        //支付通知
+        $config = AlipayIsvConfig::where('id', 1)->first();
+        $alipayrsaPublicKey = $config->alipayrsaPublicKey;
+        $aop = $this->AopClientNotify();
+        $aop->alipayrsaPublicKey = $alipayrsaPublicKey;
+        $umxnt = $aop->rsaCheckUmxnt($request->all(), $alipayrsaPublicKey);
+        if ($umxnt) {
+            $data=$request->all();
+            AlipayTradeQuery::where('trade_no',$data['trade_no'])->update([
+                'status'=>$data['trade_status'],
+                'total_amount'=>$data['total_amount'],
+            ]);
+        }
 
+    }
+    public function alipay_notify(Request $request)
+    {
+        Log::info('...' . $request);
     }
 
     //商户开店状态通知URL
@@ -34,7 +52,7 @@ class NotifyController extends AlipayOpenController
         $aop = $this->AopClientNotify();
         $aop->alipayrsaPublicKey = $alipayrsaPublicKey;
         $umxnt = $aop->rsaCheckUmxnt($requestArray, $alipayrsaPublicKey);
-        Log::info('_________'.$umxnt);
+        Log::info('_________' . $umxnt);
         if ($umxnt) {
             $data = [
                 'shop_id' => $request->get('shop_id', ''),
@@ -54,9 +72,9 @@ class NotifyController extends AlipayOpenController
                 'request_id' => $request->get('request_id', ''),
                 'audit_status' => $request->get('audit_status', ''),
             ];
-            if ($request->get('result_code','')) {
-                $dataInfo['result_code'] = $request->get('result_code','');
-                $dataInfo['result_desc'] = $request->get('result_desc','');
+            if ($request->get('result_code', '')) {
+                $dataInfo['result_code'] = $request->get('result_code', '');
+                $dataInfo['result_desc'] = $request->get('result_desc', '');
             }
             if ($storeInfo) {
                 AlipayStoreInfo::where('store_id', $store->store_id)->update($dataInfo);

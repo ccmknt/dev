@@ -51,14 +51,15 @@
                                         _token: $("#token").val()
                                     },
                                     function (dataStatus) {
+                                        //付款成功
+                                        if (result.resultCode == "9000") {
+                                            window.location.href = "{{url('admin/alipayopen/PaySuccess?price=')}}" + $("#total_amount").val();
+                                        }
+                                        if (result.resultCode == "6001") {
+                                            window.location.href = "{{url('admin/alipayopen/OrderErrors?code=6001')}}";
+                                        }
                                     }, "json");
-                            //付款成功
-                            if (result.resultCode == "9000") {
-                                window.location.href = "{{url('admin/alipayopen/PaySuccess?price=')}}" + $("#total_amount").val();
-                            }
-                            if (result.resultCode == "6001") {
-                                window.location.href = "{{url('admin/alipayopen/OrderErrors?code=6001')}}";
-                            }
+
                         });
                     } else {
                         window.location.href = "{{url('admin/alipayopen/OrderErrors')}}";

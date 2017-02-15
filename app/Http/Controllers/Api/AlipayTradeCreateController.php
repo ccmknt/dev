@@ -13,6 +13,7 @@ use App\Models\AlipayIsvConfig;
 use App\Models\AlipayShopLists;
 use App\Models\AlipayTradeQuery;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class AlipayTradeCreateController extends BaseController
 {
@@ -37,10 +38,13 @@ class AlipayTradeCreateController extends BaseController
         $goods_id = "goods_" . date('YmdHis', time());
         //1.实例化公共参数
         $c = $this->AopClient();
+        $c->notify_url=url('/notify');
         $c->method = "alipay.trade.create";
+
         $c->version = "2.0";
         //2.调用接口
         $requests = new AlipayTradeCreateRequest();
+        $requests->setNotifyUrl(url('/notify'));
         $user = $request->session()->get('user_data');
         $out_trade_no = time() . rand(100, 999);
         /**
@@ -119,10 +123,13 @@ class AlipayTradeCreateController extends BaseController
         $goods_id = "goods_" . date('YmdHis', time());
         //1.实例化公共参数
         $c = $this->AopClient();
+        $c->notify_url=url('/notify');
         $c->method = "alipay.trade.create";
         $c->version = "2.0";
+
         //2.调用接口
         $requests = new AlipayTradeCreateRequest();
+        $requests->setNotifyUrl(url('/notify'));
         $user = $request->session()->get('user_data');
         $out_trade_no = time() . rand(100, 999);
         /**

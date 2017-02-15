@@ -43,7 +43,13 @@ Route::group(['namespace' => 'AlipayOpen', 'middleware' => 'auth', 'prefix' => '
     Route::get('/alipaytradelist', 'AlipayTradeListController@index')->name('alipaytradelist');
     //授权列表
     Route::get('/oauthlist', 'OauthController@oauthlist')->name('oauthlist');
+    //各种提醒设置
     Route::post('/shopNotify', 'AlipayReturnController@shopNotify')->name('shopNotify');
+    Route::get('/setWxNotify', 'AlipayReturnController@setWxNotify')->name('setWxNotify');
+    Route::post('/setWxNotifyPost', 'AlipayReturnController@setWxNotifyPost')->name('setWxNotifyPost');
+
+
+
     //权限管理
     Route::resource('/role', 'RoleController');
     Route::resource('/permission', 'PermissionController');
@@ -63,8 +69,9 @@ Route::group(['namespace' => 'AlipayOpen'], function () {
 
 //支付宝通知页面
 Route::group(['namespace' => 'AlipayOpen'], function () {
-    Route::get('/notify', 'NotifyController@notify')->name('notify');
+    Route::any('/notify', 'NotifyController@notify')->name('notify');
     Route::any('/operate_notify_url', 'NotifyController@operate_notify_url')->name('operate_notify_url');
+    Route::any('/alipay_notify', 'NotifyController@alipay_notify')->name('alipay_notify');
 });
 
 Route::group(['namespace' => 'AlipayOpen', 'prefix' => 'admin/alipayopen'], function () {

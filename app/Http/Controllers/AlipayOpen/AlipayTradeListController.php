@@ -40,14 +40,14 @@ class AlipayTradeListController extends AlipayOpenController
         $data = [];
         foreach ($query as $k => $value) {
             //下一个版本去除
-            $user_id = substr($value['store_id'], 1);
+           /* $user_id = substr($value['store_id'], 1);
             $user = AlipayAppOauthUsers::where('user_id', $user_id)->first();
             if ($user) {
                 $data1 = json_decode($this->QueryStatus($value['trade_no'], $user->app_auth_token), true);
                 if ($data1['code'] == 10000) {
                     AlipayTradeQuery::where('trade_no', $data1['trade_no'])->update(['status' => $data1['trade_status']]);
                 }
-            }
+            }*/
             //结束
             $data[] = $value;
             $frist = substr($value['store_id'], 0, 1);
