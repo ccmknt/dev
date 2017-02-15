@@ -7,6 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class AlipayAppOauthUsers extends Model
 {
     //
-    protected $fillable=['user_id','auth_shop_name','auth_phone','auth_app_id','app_auth_token', 'app_refresh_token', 'expires_in' , 're_expires_in'];
+    protected $fillable=['user_id','promoter_id','auth_shop_name','auth_phone','auth_app_id','app_auth_token', 'app_refresh_token', 'expires_in' , 're_expires_in'];
 
 }
