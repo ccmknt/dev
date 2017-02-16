@@ -12,6 +12,9 @@ use App\Models\AlipayAppOauthUsers;
 use App\Models\AlipayIsvConfig;
 use App\Models\AlipayShopLists;
 use App\Models\AlipayTradeQuery;
+use App\Models\WeixinPayConfig;
+use App\Models\WeixinPayNotify;
+use EasyWeChat\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -38,7 +41,7 @@ class AlipayTradeCreateController extends BaseController
         $goods_id = "goods_" . date('YmdHis', time());
         //1.实例化公共参数
         $c = $this->AopClient();
-        $c->notify_url=url('/notify');
+        $c->notify_url = url('/notify');
         $c->method = "alipay.trade.create";
 
         $c->version = "2.0";
@@ -123,7 +126,7 @@ class AlipayTradeCreateController extends BaseController
         $goods_id = "goods_" . date('YmdHis', time());
         //1.实例化公共参数
         $c = $this->AopClient();
-        $c->notify_url=url('/notify');
+        $c->notify_url = url('/notify');
         $c->method = "alipay.trade.create";
         $c->version = "2.0";
 
@@ -188,12 +191,68 @@ class AlipayTradeCreateController extends BaseController
 
     public function OrderStatus(Request $request)
     {
+       //支付同步通知
         $trade_no = $request->get('trade_no');
         $resultCode = $request->get('resultCode');
         AlipayTradeQuery::where('trade_no', $trade_no)->update(['status' => $resultCode]);
+        try {
+            //店铺通知微信
+            if ($resultCode == 9000) {
+                $AlipayTradeQuery = AlipayTradeQuery::where('trade_no', $trade_no)->first();
+                $store_id = $AlipayTradeQuery->store_id;
+                $WeixinPayNotifyStore = WeixinPayNotify::where('store_id', $store_id)->first();
+                //实例化
+                $config = WeixinPayConfig::where('id', 1)->first();
+                $options = [
+                    'app_id' => $config->app_id,
+                    'secret' => $config->secret,
+                    'token' => '18851186776',
+                    'payment' => [
+                        'merchant_id' => $config->merchant_id,
+                        'key' => $config->key,
+                        'cert_path' => $config->cert_path, // XXX: 绝对路径！！！！
+                        'key_path' => $config->key_path,      // XXX: 绝对路径！！！！
+                        'notify_url' => $config->notify_url,       // 你也可以在下单时单独设置来想覆盖它
+                    ],
+                ];
+                $app = new Application($options);
+                $broadcast = $app->broadcast;//群发
+                $userService = $app->user;
+                $open_ids = $userService->lists()->data['openid'];//获得所有关注的微信openid
+                /*  foreach ($open_ids as $v) {
+                  $userinfo[]=$userService->get($v);
+
+                  }*/
+
+                $notice = $app->notice;
+                $userIds = $WeixinPayNotifyStore->receiver;
+                $open_ids = explode(",", $userIds);
+                $templateId = $WeixinPayNotifyStore->template_id;
+                $url = $WeixinPayNotifyStore->linkTo;
+                $color = $WeixinPayNotifyStore->topColor;
+                $data = array(
+                    "keyword1" => $AlipayTradeQuery->total_amount,
+                    "keyword2" => '支付宝',
+                    "keyword3" =>''.$AlipayTradeQuery->updated_at.'' ,
+                    "keyword4" => $trade_no,
+                    "remark" => '查看详细信息点击这里',
+                );
+                foreach ($open_ids as $v) {
+                    $notice->uses($templateId)->withUrl($url)->andData($data)->andReceiver($v)->send();
+                }
+
+            }
+
+        } catch (\Exception $exception) {
+            Log::info($exception);
+            return json_encode([
+                'status' => 1,
+            ]);
+        }
         return json_encode([
             'status' => 1,
         ]);
+
     }
 
 }

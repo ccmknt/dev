@@ -44,21 +44,27 @@
                                 AlipayJSBridge.call("tradePay", {
                                     tradeNO: data.trade_no
                                 }, function (result) {
-                                    //更新状态
-                                    $.post("{{route('OrderStatus')}}", {
-                                                trade_no: data.trade_no,
-                                                resultCode: result.resultCode,
-                                                _token: $("#token").val()
-                                            },
-                                            function (dataStatus) {
-                                                //付款成功
-                                                if (result.resultCode == "9000") {
-                                                    window.location.href = "{{url('admin/alipayopen/PaySuccess?price=')}}" + $("#total_amount").val();
-                                                }
-                                                if (result.resultCode == "6001") {
-                                                    window.location.href = "{{url('admin/alipayopen/OrderErrors?code=6001')}}";
-                                                }
-                                            }, "json");
+                                    //付款成功
+                                    if (result.resultCode == "9000") {
+                                        window.location.href = "{{url('admin/alipayopen/PaySuccess?price=')}}" + $("#total_amount").val();
+                                    }
+                                    if (result.resultCode == "6001") {
+                                        window.location.href = "{{url('admin/alipayopen/OrderErrors?code=6001')}}";
+                                    }
+
+                                    /*  //同步更新状态route('OrderStatus')
+                                     $.post("", {
+                                     trade_no: data.trade_no,
+                                     resultCode: result.resultCode,
+                                     _token: $("#token").val()
+                                     },
+                                     function (dataStatus) {
+                                     //付款成功
+                                     if (result.resultCode == "9000") {
+                                     }
+                                     if (result.resultCode == "6001") {
+                                     }
+                                     }, "json");*/
 
                                 });
 

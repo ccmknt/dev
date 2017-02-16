@@ -13,6 +13,9 @@ use App\Models\AlipayIsvConfig;
 use App\Models\AlipayShopLists;
 use App\Models\AlipayStoreInfo;
 use App\Models\AlipayTradeQuery;
+use App\Models\WeixinPayConfig;
+use App\Models\WeixinPayNotify;
+use EasyWeChat\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -22,21 +25,81 @@ class NotifyController extends AlipayOpenController
 
     public function notify(Request $request)
     {
-        //支付通知
+        //支付异步通知
         $config = AlipayIsvConfig::where('id', 1)->first();
         $alipayrsaPublicKey = $config->alipayrsaPublicKey;
         $aop = $this->AopClientNotify();
         $aop->alipayrsaPublicKey = $alipayrsaPublicKey;
         $umxnt = $aop->rsaCheckUmxnt($request->all(), $alipayrsaPublicKey);
         if ($umxnt) {
-            $data=$request->all();
-            AlipayTradeQuery::where('trade_no',$data['trade_no'])->update([
-                'status'=>$data['trade_status'],
-                'total_amount'=>$data['total_amount'],
-            ]);
-        }
+            $data = $request->all();
+            Log::info($data);
+            $AlipayTradeQuery = AlipayTradeQuery::where('trade_no', $data['trade_no'])->first();
+            //如果状态不相同修改数据库状态
+            if ($AlipayTradeQuery->status != $data['total_amount']) {
+                AlipayTradeQuery::where('trade_no', $data['trade_no'])->update([
+                    'status' => $data['trade_status'],
+                    'total_amount' => $data['total_amount'],
+                ]);
 
+                //微信通知商户收营员
+                try {
+                    //店铺通知微信
+                    if ($data['trade_status']== 'TRADE_SUCCESS') {
+                        $store_id = $AlipayTradeQuery->store_id;
+                        $WeixinPayNotifyStore = WeixinPayNotify::where('store_id', $store_id)->first();
+                        //实例化
+                        $config = WeixinPayConfig::where('id', 1)->first();
+                        $options = [
+                            'app_id' => $config->app_id,
+                            'secret' => $config->secret,
+                            'token' => '18851186776',
+                            'payment' => [
+                                'merchant_id' => $config->merchant_id,
+                                'key' => $config->key,
+                                'cert_path' => $config->cert_path, // XXX: 绝对路径！！！！
+                                'key_path' => $config->key_path,      // XXX: 绝对路径！！！！
+                                'notify_url' => $config->notify_url,       // 你也可以在下单时单独设置来想覆盖它
+                            ],
+                        ];
+                        $app = new Application($options);
+                        $broadcast = $app->broadcast;//群发
+                        $userService = $app->user;
+                        $open_ids = $userService->lists()->data['openid'];//获得所有关注的微信openid
+                        /*  foreach ($open_ids as $v) {
+                          $userinfo[]=$userService->get($v);
+
+                          }*/
+
+                        $notice = $app->notice;
+                        $userIds = $WeixinPayNotifyStore->receiver;
+                        $open_ids = explode(",", $userIds);
+                        $templateId = $WeixinPayNotifyStore->template_id;
+                        $url = $WeixinPayNotifyStore->linkTo;
+                        $color = $WeixinPayNotifyStore->topColor;
+                        $data = array(
+                            "keyword1" => $AlipayTradeQuery->total_amount,
+                            "keyword2" => '支付宝('.$data['buyer_logon_id'].')',
+                            "keyword3" =>''.$AlipayTradeQuery->updated_at.'' ,
+                            "keyword4" => $data['trade_no'],
+                            "remark" => '祝'.$WeixinPayNotifyStore->store_name.'生意红火',
+                        );
+                        foreach ($open_ids as $v) {
+                            $notice->uses($templateId)->withUrl($url)->andData($data)->andReceiver($v)->send();
+                        }
+
+                    }
+
+                } catch (\Exception $exception) {
+                    Log::info($exception);
+                    return json_encode([
+                        'status' => 1,
+                    ]);
+                }
+            }
+        }
     }
+
     public function alipay_notify(Request $request)
     {
         Log::info('...' . $request);
