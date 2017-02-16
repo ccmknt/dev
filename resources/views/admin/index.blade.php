@@ -62,7 +62,7 @@
                             </li>
                             @endpermission
                             <li>
-                                <a class="J_menuItem" href="">分类更新</a>
+                                <a class="J_menuItem" href="{{route('AlipayShopCategory')}}">分类更新</a>
                             </li>
                         </ul>
                     </li>

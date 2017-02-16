@@ -62,6 +62,7 @@ class AlipayShopCategoryController extends BaseController
                 }
 
             }
+            echo '更新分类成功';
 
         } else {
             echo "失败";

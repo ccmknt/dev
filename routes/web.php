@@ -44,7 +44,7 @@ Route::group(['namespace' => 'AlipayOpen', 'middleware' => 'auth', 'prefix' => '
     //授权列表
     Route::get('/oauthlist', 'OauthController@oauthlist')->name('oauthlist');
     Route::get('/updateOauthUser', 'OauthController@updateOauthUser')->name('updateOauthUser');
-    Route::post('/updateOauthUserPost', 'OauthController@updateOauthUserPost')->name('updateOauthUserPost');
+    Route::post('/updateOauthUserPost', 'OauthController@AlipayShopCategoryController.php')->name('updateOauthUserPost');
 
     //各种提醒设置
     Route::post('/shopNotify', 'AlipayReturnController@shopNotify')->name('shopNotify');
