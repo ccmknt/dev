@@ -42,8 +42,11 @@
                                                 <a href="{{url('/admin/alipayopen/onlyskm?user_id='.$v->user_id)}}">
                                                     <button type="button" class="btn  btn-success">收款码</button>
                                                 </a>
+                                                <a href="{{url('/admin/alipayopen/updateOauthUser?id='.$v->id)}}">
+                                                <button type="button" class="btn btn-outline btn-info">修改</button>
+                                                 </a>
                                                 <a href="{{url('admin/alipayopen/setWxNotify?set_type=oskm&id='.$v->id)}}">
-                                                    <button type="button" class="btn btn-outline btn-default">收银提醒设置</button>
+                                                    <button type="button" class="btn  btn-default">收银提醒设置</button>
                                                 </a>
                                             </td>
                                         </tr>

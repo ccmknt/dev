@@ -59,6 +59,9 @@ class AlipayReturnController extends AlipayOpenController
         }
 
         $WxPayNotify = WeixinPayNotify::where('store_id', $store_id)->first();
+        if ($WxPayNotify){
+            $WxPayNotify=$WxPayNotify->toArray();
+        }
         return view('admin.alipayopen.config.setWxNotify', compact('set_type', 'store_id', 'store_name', 'WxPayNotify'));
 
     }
@@ -70,7 +73,7 @@ class AlipayReturnController extends AlipayOpenController
         $data = $request->except(['_token']);
         try {
             if ($re) {
-                WeixinPayNotify::where('store_id',$store_id)->update($data);
+                WeixinPayNotify::where('store_id', $store_id)->update($data);
             } else {
                 WeixinPayNotify::create($data);
             }

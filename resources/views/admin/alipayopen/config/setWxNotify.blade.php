@@ -21,27 +21,27 @@
                             </div>
                             <div class="form-group">
                                 <label>收银员设置</label>
-                                <input value="{{$WxPayNotify->receiver}}" disabled   id="receiver" placeholder="请填写收银员微信号多个以 ',' 隔开" class="form-control" name="receiver"  type="hidden">
+                                <input value="{{$WxPayNotify['receiver']}}" disabled   id="receiver" placeholder="请填写收银员微信号多个以 ',' 隔开" class="form-control" name="receiver"  type="hidden">
                             </div>
                             <div class="hr-line-dashed"></div>
                             <div class="form-group">
                                 <label>微信通知模板ID</label>
-                                <input  id="template_id"  value="{{$WxPayNotify->template_id}}" placeholder="请填写微信通知模板ID,在公众号后台模板消息可以看到模板id" class="form-control" name="template_id"  type="text">
+                                <input  id="template_id"  value="{{$WxPayNotify['template_id']}}" placeholder="请填写微信通知模板ID,在公众号后台模板消息可以看到模板id" class="form-control" name="template_id"  type="text">
                             </div>
                             <div class="hr-line-dashed"></div>
                             <div class="form-group">
                                 <label>设置模板头部颜色</label>
-                                <input  id="topColor" value="{{$WxPayNotify->topColor}}" placeholder="请设置模板头部颜色" class="form-control" name="topColor"  type="text">
+                                <input  id="topColor" value="{{$WxPayNotify['topColor']}}" placeholder="请设置模板头部颜色" class="form-control" name="topColor"  type="text">
                             </div>
                             <div class="hr-line-dashed"></div>
                             <div class="form-group">
                                 <label>设置详情链接</label>
-                                <input  id="linkTo" value="{{$WxPayNotify->linkTo}}" placeholder="设置详情链接" class="form-control" name="linkTo"  type="text">
+                                <input  id="linkTo" value="{{$WxPayNotify['linkTo']}}" placeholder="设置详情链接" class="form-control" name="linkTo"  type="text">
                             </div>
                             <div class="hr-line-dashed"></div>
                                 <div class="form-group">
                                     <label>设置模板数据</label>
-                                    <textarea style="min-height: 100px"  id="data" value="" placeholder="设置模板数据" class="form-control" name="data"  type="text">{{$WxPayNotify->data}}</textarea>
+                                    <textarea style="min-height: 100px"  id="data" value="" placeholder="设置模板数据" class="form-control" name="data"  type="text">{{$WxPayNotify['data']}}</textarea>
                                 </div>
                                 <div class="hr-line-dashed"></div>
                             <div>

@@ -45,7 +45,7 @@ class OauthController extends AlipayOpenController
 //授权回调获取商户信息主要是获取token
     public function callback(Request $request)
     {
-        $state = $request->get('state','App_7');//个人授权有这个参数商户授权没有这个参数
+        $state = $request->get('state', 'App_6');//个人授权有这个参数商户授权没有这个参数
         $arr = explode('_', $state);
         //第三方应用授权
         if ($arr[0] == "App") {
@@ -98,7 +98,7 @@ class OauthController extends AlipayOpenController
             //  +"user_id": "2088102168897200"
             return redirect("/alipayopen/userinfo?user_id=" . $app_response->user_id);
         } //A用户授权跳转收款
-        if ($arr[0] == "OSK"||$arr[0] == "SXD") {
+        if ($arr[0] == "OSK" || $arr[0] == "SXD") {
             //SYD_2088402162863826  扫码下单 生成二维码 用户输入金额 完成付款
             $type = $arr[0];
             $u_id = $arr[1];
@@ -161,7 +161,7 @@ class OauthController extends AlipayOpenController
 
     public function userinfoinsert(Request $request)
     {
-        $user_id = $request->get('user_id',1);
+        $user_id = $request->get('user_id', 1);
         $auth_shop_name = $request->get('auth_shop_name');
         $auth_phone = $request->get('auth_phone');
         if ($user_id) {
@@ -192,9 +192,9 @@ class OauthController extends AlipayOpenController
             die;
         }
         //
-        $data =DB::table('users')->select('users.name', 'alipay_app_oauth_users.*')->orderBy('updated_at','desc')->where('promoter_id',Auth::user()->id)->join('alipay_app_oauth_users', 'alipay_app_oauth_users.promoter_id', '=', 'users.id')->get();
+        $data = DB::table('users')->select('users.name', 'alipay_app_oauth_users.*')->orderBy('updated_at', 'desc')->where('promoter_id', Auth::user()->id)->join('alipay_app_oauth_users', 'alipay_app_oauth_users.promoter_id', '=', 'users.id')->get();
         if (Auth::user()->hasRole('admin')) {
-            $data = DB::table('users')->select('users.name', 'alipay_app_oauth_users.*')->orderBy('updated_at','desc')->join('alipay_app_oauth_users', 'alipay_app_oauth_users.promoter_id', '=', 'users.id')->get();
+            $data = DB::table('users')->select('users.name', 'alipay_app_oauth_users.*')->orderBy('updated_at', 'desc')->join('alipay_app_oauth_users', 'alipay_app_oauth_users.promoter_id', '=', 'users.id')->get();
         }
         if ($data->isEmpty()) {
             $paginator = "";
@@ -220,8 +220,28 @@ class OauthController extends AlipayOpenController
         return view('admin.alipayopen.store.oauthlist', compact('datapage', 'paginator'));
     }
 
-    public function getUserAuth()
+    //修改信息
+    public function updateOauthUser(Request $request)
     {
+        $id = $request->get('id');
+        $store = AlipayAppOauthUsers::where('id', $id)->first()->toArray();
+        return view('admin.alipayopen.config.updateOauthUser', compact('store'));
 
     }
+
+    public function updateOauthUserPost(Request $request)
+    {
+        $data = $request->except(['_token', 'id']);
+        try {
+            AlipayAppOauthUsers::where('id', $request->get('id'))->update($data);
+        } catch (\Exception $exception) {
+            return json_encode([
+                'status' => 0,
+            ]);
+        }
+        return json_encode([
+            'status' => 1,
+        ]);
+    }
+
 }

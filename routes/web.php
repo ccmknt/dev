@@ -43,6 +43,9 @@ Route::group(['namespace' => 'AlipayOpen', 'middleware' => 'auth', 'prefix' => '
     Route::get('/alipaytradelist', 'AlipayTradeListController@index')->name('alipaytradelist');
     //授权列表
     Route::get('/oauthlist', 'OauthController@oauthlist')->name('oauthlist');
+    Route::get('/updateOauthUser', 'OauthController@updateOauthUser')->name('updateOauthUser');
+    Route::post('/updateOauthUserPost', 'OauthController@updateOauthUserPost')->name('updateOauthUserPost');
+
     //各种提醒设置
     Route::post('/shopNotify', 'AlipayReturnController@shopNotify')->name('shopNotify');
     Route::get('/setWxNotify', 'AlipayReturnController@setWxNotify')->name('setWxNotify');
@@ -107,7 +110,7 @@ Route::group(['namespace' => 'Api'/*'middleware' => 'auth'*/, 'prefix' => 'admin
     Route::any('/getProvince', 'ProvinceCityController@getProvince')->name("getProvince");
     Route::any('/getCity', 'ProvinceCityController@getCity')->name("getCity");
     Route::any('/getCategory', 'AlipayShopCategoryController@getCategory')->name("getCategory");
-    Route::post('/OrderStatus', 'AlipayTradeCreateController@OrderStatus')->name("OrderStatus");
+    Route::any('/OrderStatus', 'AlipayTradeCreateController@OrderStatus')->name("OrderStatus");
 
 });
 //API  AUTH
