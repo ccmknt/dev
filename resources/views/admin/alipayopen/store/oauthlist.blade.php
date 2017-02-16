@@ -15,6 +15,7 @@
                             <table class="table table-striped">
                                 <thead>
                                 <tr>
+                                    <th>店铺id</th>
                                     <th>店铺名称</th>
                                     <th>联系电话</th>
                                     <th>授权时间</th>
@@ -27,17 +28,22 @@
                                 @if($datapage)
                                     @foreach($datapage as $v)
                                         <tr>
+                                            <td>o{{$v->user_id}}</td>
                                             <td>{{$v->auth_shop_name}}</td>
                                             <td><span class="pie">{{$v->auth_phone}}</span></td>
                                             <td>{{$v->created_at}}</td>
                                             <td>{{$v->updated_at}}</td>
                                             <td>{{$v->name}}</td>
                                             <td>
+
                                                 <a href="{{url('/admin/alipayopen/store/create?app_auth_token='.$v->app_auth_token)}}">
                                                     <button type="button" class="btn  btn-success">口碑开店</button>
                                                 </a>
                                                 <a href="{{url('/admin/alipayopen/onlyskm?user_id='.$v->user_id)}}">
                                                     <button type="button" class="btn  btn-success">收款码</button>
+                                                </a>
+                                                <a href="{{url('admin/alipayopen/setWxNotify?set_type=oskm&id='.$v->id)}}">
+                                                    <button type="button" class="btn btn-outline btn-default">收银提醒设置</button>
                                                 </a>
                                             </td>
                                         </tr>
