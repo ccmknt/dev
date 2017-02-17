@@ -36,7 +36,7 @@ class NotifyController extends AlipayOpenController
             Log::info($data);
             $AlipayTradeQuery = AlipayTradeQuery::where('trade_no', $data['trade_no'])->first();
             //如果状态不相同修改数据库状态
-            if ($AlipayTradeQuery->status != $data['total_amount']) {
+            if ($AlipayTradeQuery->status != $data['trade_status']) {
                 AlipayTradeQuery::where('trade_no', $data['trade_no'])->update([
                     'status' => $data['trade_status'],
                     'total_amount' => $data['total_amount'],

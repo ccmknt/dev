@@ -78,7 +78,7 @@ class ServerController extends Controller
 
                 }
             } catch (\Exception $exception) {
-                return '绑定失败店铺';
+                //return '绑定失败店铺';
             }
         });
 
