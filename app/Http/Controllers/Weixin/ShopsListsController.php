@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class ShopsListsController extends BaseController
@@ -116,8 +117,20 @@ class ShopsListsController extends BaseController
         $code_url = url('admin/weixin/oauth?sub_info=pay_' . $mch_id);
         return view('admin.weixin.wxpayqr', compact('code_url', 'shop'));
     }
-
+//收单列表
     public function WxOrder(Request $request)
+    {
+        $wxorder = DB::table('wx_pay_orders')
+            ->join('weixin_shop_lists', 'wx_pay_orders.mch_id', '=', 'weixin_shop_lists.store_id')
+            ->select('wx_pay_orders.*', 'weixin_shop_lists.store_name')
+            ->orderBy('updated_at', 'desc')
+            ->paginate(8);;
+
+        return view('admin.weixin.wxorder', compact('wxorder'));
+
+    }
+
+    public function WxOrder1(Request $request)
     {
         $wxorder = WxPayOrder::all();
         if ($wxorder->isEmpty()) {

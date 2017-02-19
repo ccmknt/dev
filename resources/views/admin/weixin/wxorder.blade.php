@@ -19,13 +19,13 @@
                             style="width: 308px;" aria-label="平台：激活排序列升序">店铺ID
                         </th>
                         <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1"
+                            style="width: 308px;" aria-label="平台：激活排序列升序">店铺名称
+                        </th>
+                        <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1"
                             style="width: 142px;" aria-label="引擎版本：激活排序列升序">创建时间
                         </th>
                         <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1"
                             style="width: 144px;" aria-label="CSS等级：激活排序列升序">更新时间
-                        </th>
-                        <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1"
-                            style="width: 144px;" aria-label="CSS等级：激活排序列升序">买家账号
                         </th>
                         <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1"
                             style="width: 144px;" aria-label="CSS等级：激活排序列升序">总金额
@@ -36,38 +36,35 @@
                     </tr>
                     </thead>
                     <tbody id="appends">
-                    @if($datapage)
-                        @foreach($datapage as $v)
-                            <tr class='gradeA odd'>
-                                <td class=''>{{$v['out_trade_no']}}</td>
-                                <td class=''>{{$v['mch_id']}}</td>
-                                <td class=''>{{$v['created_at']}}</td>
-                                <td class=''>{{$v['updated_at']}}</td>
-                                <td class=''>{{$v['open_id']}}</td>
-                                <td class=''>{{$v['total_fee']}}</td>
-                                @if($v['trade_state']=="NOTPAY")
-                                    <td class=''>等待买家付款</td>
-                                @elseif($v['trade_state']=="SUCCESS")
-                                    <td style="color: green"><button type="button" class="btn btn-outline btn-success">付款成功</button></td>
-                                @endif
-                            </tr>
-                        @endforeach
+                    @foreach($wxorder as $v)
+                        <tr class='gradeA odd'>
+                            <td class=''>{{$v->out_trade_no}}</td>
+                            <td class=''>w{{$v->mch_id}}</td>
+                            <td class=''>{{$v->store_name}}</td>
+                            <td class=''>{{$v->created_at}}</td>
+                            <td class=''>{{$v->updated_at}}</td>
+                            <td class=''>{{$v->total_fee}}</td>
+
+                            @if($v->status=="SUCCESS")
+                                <td style="color: green">
+                                    <button type="button" class="btn btn-outline btn-success">付款成功</button>
+                                </td>
+
+                            @else
+                                <td class=''>等待买家付款</td>
+                            @endif
+                        </tr>
+                    @endforeach
                     </tbody>
                 </table>
 
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_0_paginate">
-                            {{$paginator->render()}}
+                            {{$wxorder->links()}}
                         </div>
                     </div>
                 </div>
-
-                @else
-                    <div class="row">
-                        没有任何交易记录
-                    </div>
-                @endif
             </div>
 
         </div>

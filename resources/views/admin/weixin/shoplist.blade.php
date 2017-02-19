@@ -28,7 +28,7 @@
                                 @if($datapage)
                                     @foreach($datapage as $v)
                                         <tr>
-                                            <td>{{$v['store_id']}}</td>
+                                            <td>w{{$v['store_id']}}</td>
                                             <td><span class="pie">{{$v['app_id']}}</span></td>
                                             <td>{{$v['store_name']}}</td>
                                             <td>{{$v['mch_id']}}</td>

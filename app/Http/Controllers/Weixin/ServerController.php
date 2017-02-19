@@ -6,6 +6,7 @@ use App\Models\AlipayAppOauthUsers;
 use App\Models\AlipayShopLists;
 use App\Models\WeixinPayConfig;
 use App\Models\WeixinPayNotify;
+use App\Models\WeixinShopList;
 use Illuminate\Http\Request;
 use EasyWeChat\Foundation\Application;
 use App\Http\Requests;
@@ -46,12 +47,19 @@ class ServerController extends Controller
                     $store_id = 'o' . $so->user_id;
                     $store_name = $so->auth_shop_name;
                 }
-                
+
                 if ($substr === "s") {
                     $so = AlipayShopLists::where('store_id', $message->Content)->first();
                     $store_id = $so->store_id;
                     $store_name = $so->main_shop_name;
                 }
+
+                if ($substr === "w") {
+                    $so = WeixinShopList::where('mch_id', substr($message->Content, 1))->first();
+                    $store_id = 'w' . $so->mch_id;
+                    $store_name = $so->store_name;
+                }
+
                 if ($so) {
                     $WeixinPayNotify = WeixinPayNotify::where('store_id', $store_id)->first();
                     if ($WeixinPayNotify) {

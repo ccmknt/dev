@@ -64,14 +64,7 @@ class NotifyController extends AlipayOpenController
                             ],
                         ];
                         $app = new Application($options);
-                        $broadcast = $app->broadcast;//群发
                         $userService = $app->user;
-                        $open_ids = $userService->lists()->data['openid'];//获得所有关注的微信openid
-                        /*  foreach ($open_ids as $v) {
-                          $userinfo[]=$userService->get($v);
-
-                          }*/
-
                         $template = PageSets::where('id', 1)->first();
                         $notice = $app->notice;
                         $userIds = $WeixinPayNotifyStore->receiver;
@@ -100,6 +93,7 @@ class NotifyController extends AlipayOpenController
                 }
             }
         }
+        return true;
     }
 
     public function alipay_notify(Request $request)
@@ -147,8 +141,10 @@ class NotifyController extends AlipayOpenController
                 AlipayStoreInfo::create($dataInfo);
             }
         } else {
-            dd('失败！不是支付宝请求');
+            return false;
         }
+
+        return true;
     }
 }
 

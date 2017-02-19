@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Weixin;
 
+use App\Models\PageSets;
+use App\Models\WeixinPayConfig;
+use App\Models\WeixinPayNotify;
 use App\Models\WeixinShopList;
 use App\Models\WxPayOrder;
 use Illuminate\Http\Request;
@@ -10,6 +13,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use EasyWeChat\Payment\Order;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class WeixinPayController extends BaseController
 {
@@ -121,8 +125,77 @@ class WeixinPayController extends BaseController
     }
 
     //支付结果通知网址
-    public function ordernotify()
+    public function ordernotify(Request $request)
     {
-        echo 'ordernotify';
+        $options = $this->Options();
+        $app = new Application($options);
+        $response = $app->payment->handleNotify(function ($notify, $successful) {
+            $out_trade_no = $notify->out_trade_no;//订单号
+            $result_code = $notify->result_code;
+            // 你的逻辑
+            try {
+                $WxPayOrder = WxPayOrder::where('out_trade_no', $out_trade_no)->first();
+                if ($WxPayOrder) {
+                    if ($WxPayOrder->status != $result_code) {
+                        WxPayOrder::where('out_trade_no', $out_trade_no)->update([
+                            'status' => $result_code
+                        ]);
+
+                        if ($result_code == "SUCCESS") {
+                            try {
+                                //设置成功提醒微信收款
+                                $store_id = 'w' . $WxPayOrder->mch_id;//微信店铺id;
+                                $WeixinPayNotifyStore = WeixinPayNotify::where('store_id', $store_id)->first();
+                                //实例化
+                                $config = WeixinPayConfig::where('id', 1)->first();//微信支付参数 app_id
+                                $optionsNotify = [
+                                    'app_id' => $config->app_id,
+                                    'secret' => $config->secret,
+                                    'token' => '18851186776',
+                                    'payment' => [
+                                        'merchant_id' => $config->merchant_id,
+                                        'key' => $config->key,
+                                        'cert_path' => $config->cert_path, // XXX: 绝对路径！！！！
+                                        'key_path' => $config->key_path,      // XXX: 绝对路径！！！！
+                                        'notify_url' => $config->notify_url,       // 你也可以在下单时单独设置来想覆盖它
+                                    ],
+                                ];
+                                $app = new Application($optionsNotify);
+                                $userService = $app->user;
+                                $template = PageSets::where('id', 1)->first();
+                                $notice = $app->notice;
+                                $userIds = $WeixinPayNotifyStore->receiver;
+                                $open_ids = explode(",", $userIds);
+                                $templateId = $template->string1;
+                                $url = $WeixinPayNotifyStore->linkTo;
+                                $color = $WeixinPayNotifyStore->topColor;
+                                $user = $userService->get($WxPayOrder->open_id);//买家open_id
+                                $data = array(
+                                    "keyword1" => $WxPayOrder->total_fee,
+                                    "keyword2" => '微信支付(' . $user->nickname . ')',
+                                    "keyword3" => '' . $WxPayOrder->updated_at . '',
+                                    "keyword4" => $out_trade_no,
+                                    "remark" => '祝' . $WeixinPayNotifyStore->store_name . '生意红火',
+                                );
+                                foreach ($open_ids as $v) {
+                                    $notice->uses($templateId)->withUrl($url)->andData($data)->andReceiver($v)->send();
+                                }
+
+
+                            } catch (\Exception $exception) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            } catch (\Exception $exception) {
+                Log::info($exception);
+                return false;
+            }
+            return true; // 或者错误消息
+        });
+        return $response;
+        /*$notify
+         * {"appid":"wx789fb035be0b7481","bank_type":"CFT","cash_fee":"1","fee_type":"CNY","is_subscribe":"Y","mch_id":"1273479101","nonce_str":"58a939461279b","openid":"opnT0s8Pltziuu2qATK3o8bKAWbA","out_trade_no":"20170219022054888820170219022054","result_code":"SUCCESS","return_code":"SUCCESS","sign":"75D69190E5D930EED252E43A83F457BC","sub_mch_id":"1419589702","time_end":"20170219142057","total_fee":"1","trade_type":"JSAPI","transaction_id":"4003762001201702190519905709"} */
     }
 }
