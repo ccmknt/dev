@@ -103,7 +103,7 @@
                         </a>
                         <ul class="nav nav-second-level">
                             <li>
-                                <a class="J_menuItem" href="{{route('PingAnStoreQR')}}">我的商户码</a>
+                                <a class="J_menuItem" href="{{route('QrLists')}}">我的商户码</a>
                             </li>
                             <li>
                                 <a class="J_menuItem" href="{{route('PingAnStoreIndex')}}">商户列表</a>
@@ -185,6 +185,9 @@
                             @permission('users')
                             <li>
                                 <a class="J_menuItem" href="{{route('setApp')}}">网站设置</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem" href="{{url('/admin/set?type=WxNotify')}}">收银提醒设置</a>
                             </li>
                             @endpermission
 

@@ -45,9 +45,9 @@
                                                 <a href="{{url('/admin/alipayopen/updateOauthUser?id='.$v->id)}}">
                                                 <button type="button" class="btn btn-outline btn-info">修改</button>
                                                  </a>
-                                                <a href="{{url('admin/alipayopen/setWxNotify?set_type=oskm&id='.$v->id)}}">
+                                               {{-- <a href="{{url('admin/alipayopen/setWxNotify?set_type=oskm&id='.$v->id)}}">
                                                     <button type="button" class="btn  btn-default">收银提醒设置</button>
-                                                </a>
+                                                </a>--}}
                                             </td>
                                         </tr>
                                     @endforeach

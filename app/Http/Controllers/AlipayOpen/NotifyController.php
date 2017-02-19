@@ -13,6 +13,7 @@ use App\Models\AlipayIsvConfig;
 use App\Models\AlipayShopLists;
 use App\Models\AlipayStoreInfo;
 use App\Models\AlipayTradeQuery;
+use App\Models\PageSets;
 use App\Models\WeixinPayConfig;
 use App\Models\WeixinPayNotify;
 use EasyWeChat\Foundation\Application;
@@ -45,7 +46,7 @@ class NotifyController extends AlipayOpenController
                 //微信通知商户收营员
                 try {
                     //店铺通知微信
-                    if ($data['trade_status']== 'TRADE_SUCCESS') {
+                    if ($data['trade_status'] == 'TRADE_SUCCESS') {
                         $store_id = $AlipayTradeQuery->store_id;
                         $WeixinPayNotifyStore = WeixinPayNotify::where('store_id', $store_id)->first();
                         //实例化
@@ -71,18 +72,19 @@ class NotifyController extends AlipayOpenController
 
                           }*/
 
+                        $template = PageSets::where('id', 1)->first();
                         $notice = $app->notice;
                         $userIds = $WeixinPayNotifyStore->receiver;
                         $open_ids = explode(",", $userIds);
-                        $templateId = $WeixinPayNotifyStore->template_id;
+                        $templateId = $template->string1;
                         $url = $WeixinPayNotifyStore->linkTo;
                         $color = $WeixinPayNotifyStore->topColor;
                         $data = array(
                             "keyword1" => $AlipayTradeQuery->total_amount,
-                            "keyword2" => '支付宝('.$data['buyer_logon_id'].')',
-                            "keyword3" =>''.$AlipayTradeQuery->updated_at.'' ,
+                            "keyword2" => '支付宝(' . $data['buyer_logon_id'] . ')',
+                            "keyword3" => '' . $AlipayTradeQuery->updated_at . '',
                             "keyword4" => $data['trade_no'],
-                            "remark" => '祝'.$WeixinPayNotifyStore->store_name.'生意红火',
+                            "remark" => '祝' . $WeixinPayNotifyStore->store_name . '生意红火',
                         );
                         foreach ($open_ids as $v) {
                             $notice->uses($templateId)->withUrl($url)->andData($data)->andReceiver($v)->send();

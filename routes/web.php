@@ -52,7 +52,6 @@ Route::group(['namespace' => 'AlipayOpen', 'middleware' => 'auth', 'prefix' => '
     Route::post('/setWxNotifyPost', 'AlipayReturnController@setWxNotifyPost')->name('setWxNotifyPost');
 
 
-
     //权限管理
     Route::resource('/role', 'RoleController');
     Route::resource('/permission', 'PermissionController');
@@ -151,7 +150,11 @@ Route::group(['namespace' => 'Weixin', 'middleware' => 'auth', 'prefix' => 'admi
     Route::get('/WxPayQr', 'ShopsListsController@WxPayQr')->name("WxPayQr");
     Route::get('/WxOrder', 'ShopsListsController@WxOrder')->name("WxOrder");
 });
-
+//设置
+Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
+    Route::get('/set', 'PageSetsController@setPage');
+    Route::post('/setPagePost', 'PageSetsController@setPagePost')->name('setPagePost');
+});
 //支付宝微信 二码合一需要登陆
 Route::group(['namespace' => 'AlipayWeixin', 'middleware' => 'auth', 'prefix' => 'admin/alipayweixin'], function () {
     //服务商设置
@@ -175,6 +178,10 @@ Route::group(['namespace' => 'PingAn', 'middleware' => 'auth', 'prefix' => 'admi
     Route::post('/setMerchantRatePost', 'StoreController@setMerchantRatePost')->name('setMerchantRatePost');
     Route::get('/PingAnStoreQR', 'StoreController@PingAnStoreQR')->name('PingAnStoreQR');
 
+    //空码生成
+    Route::get('/QrLists', 'PinganQrController@QrLists')->name('QrLists');
+    Route::post('/createQr', 'PinganQrController@createQr')->name('createQr');
+    Route::any('/DownloadQr', 'PinganQrController@DownloadQr')->name('DownloadQr');
     //通道配置模块
     Route::get('/pinganconfig', 'PingAnConfigController@pinganconfig')->name('pinganconfig');
     Route::post('/savepinganconfig', 'PingAnConfigController@savepinganconfig')->name('savepinganconfig');
