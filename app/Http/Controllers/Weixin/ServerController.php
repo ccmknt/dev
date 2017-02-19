@@ -46,7 +46,7 @@ class ServerController extends Controller
                     $store_id = 'o' . $so->user_id;
                     $store_name = $so->auth_shop_name;
                 }
-
+                
                 if ($substr === "s") {
                     $so = AlipayShopLists::where('store_id', $message->Content)->first();
                     $store_id = $so->store_id;
