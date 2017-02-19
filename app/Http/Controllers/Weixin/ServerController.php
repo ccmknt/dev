@@ -24,7 +24,7 @@ class ServerController extends Controller
         $options = [
             'app_id' => $config->app_id,
             'secret' => $config->secret,
-            'token'=>'18851186776',
+            'token' => '18851186776',
             'payment' => [
                 'merchant_id' => $config->merchant_id,
                 'key' => $config->key,
@@ -42,15 +42,17 @@ class ServerController extends Controller
             $substr = substr($message->Content, 0, 1);
             try {
                 if ($substr == "o") {
-                    $s1 = AlipayAppOauthUsers::where('user_id', substr($message->Content, 1))->first();
-                    $store_id = 'o' . $s1->user_id;
-                    $store_name = $s1->auth_shop_name;
-                } else {
-                    $s2 = AlipayShopLists::where('store_id', $message->Content)->first();
-                    $store_id = $s2->store_id;
-                    $store_name = $s2->main_shop_name;
+                    $so = AlipayAppOauthUsers::where('user_id', substr($message->Content, 1))->first();
+                    $store_id = 'o' . $so->user_id;
+                    $store_name = $so->auth_shop_name;
                 }
-                if ($s1 or $s2) {
+
+                if ($substr === "s") {
+                    $so = AlipayShopLists::where('store_id', $message->Content)->first();
+                    $store_id = $so->store_id;
+                    $store_name = $so->main_shop_name;
+                }
+                if ($so) {
                     $WeixinPayNotify = WeixinPayNotify::where('store_id', $store_id)->first();
                     if ($WeixinPayNotify) {
                         if ($WeixinPayNotify->receiver) {
@@ -61,16 +63,22 @@ class ServerController extends Controller
                             $ids = $WeixinPayNotify->receiver . ',' . $open_id;
                             WeixinPayNotify::where('store_id', $store_id)->update([
                                 'receiver' => $ids,
+                                'store_id' => $store_id,
+                                'store_name' => $store_name
                             ]);
                         } else {
                             WeixinPayNotify::where('store_id', $store_id)->update([
                                 'receiver' => $open_id,
+                                'store_id' => $store_id,
+                                'store_name' => $store_name
                             ]);
                         }
 
                     } else {
                         WeixinPayNotify::create([
                             'receiver' => $open_id,
+                            'store_id' => $store_id,
+                            'store_name' => $store_name
                         ]);
                     }
 
@@ -78,7 +86,7 @@ class ServerController extends Controller
 
                 }
             } catch (\Exception $exception) {
-                //return '绑定失败店铺';
+                Log::info($exception);
             }
         });
 
