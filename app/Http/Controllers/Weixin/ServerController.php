@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Weixin;
 
 use App\Models\AlipayAppOauthUsers;
 use App\Models\AlipayShopLists;
+use App\Models\PinganStore;
 use App\Models\WeixinPayConfig;
 use App\Models\WeixinPayNotify;
 use App\Models\WeixinShopList;
@@ -41,6 +42,7 @@ class ServerController extends Controller
         $server->setMessageHandler(function ($message) use ($user) {
             $open_id = $message->FromUserName;//获得发信息的open_id
             $substr = substr($message->Content, 0, 1);
+            $so="";
             try {
                 if ($substr == "o") {
                     $so = AlipayAppOauthUsers::where('user_id', substr($message->Content, 1))->first();
@@ -58,6 +60,11 @@ class ServerController extends Controller
                     $so = WeixinShopList::where('mch_id', substr($message->Content, 1))->first();
                     $store_id = 'w' . $so->mch_id;
                     $store_name = $so->store_name;
+                }
+                if ($substr === "p") {
+                    $so = PinganStore::where('external_id',$message->Content)->first();
+                    $store_id =   $so->external_id;
+                    $store_name = $so->alias_name;
                 }
 
                 if ($so) {

@@ -235,7 +235,6 @@ return [
         //扩展
         'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
         'Entrust'   => Zizaco\Entrust\EntrustFacade::class,
-
     ],
 
 ];

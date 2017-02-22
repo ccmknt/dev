@@ -15,7 +15,7 @@ class OauthController extends BaseController
     {
         $sub_info = $request->get('sub_info');
         $arr = explode('_', $sub_info);
-        if ($arr[0] == 'pay') {
+        if ($arr[0] == 'pay'||$arr[0] == 'PPay') {
             $options = $this->Options();//基础配置
             $config = [
                 'app_id' => $options['app_id'],
@@ -62,6 +62,9 @@ class OauthController extends BaseController
         $request->session()->push('wx_user_data', $userarray);
         if ($arr[0] == 'pay') {
             header('location:' . url("admin/weixin/orderview?sub_merchant_id=" . $arr[1])); // 跳转到 user/profile*/
+        }
+        if ($arr[0] == 'PPay') {
+            header('location:' . url("admin/pingan/weixin/orderview?sub_merchant_id=" . $arr[1])); // 跳转到 user/profile*/
         }
         //跳转到订单付款页面
         /* $_SESSION['wechat_user'] = $user->toArray();

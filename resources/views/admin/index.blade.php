@@ -108,6 +108,10 @@
                             <li>
                                 <a class="J_menuItem" href="{{route('PingAnStoreIndex')}}">商户列表</a>
                             </li>
+                            <li>
+                                <a class="J_menuItem" href="{{route('PingAnOrderQuery')}}">商户流水</a>
+                            </li>
+
                             @permission('pinganconfig')
                             <li>
                                 <a class="J_menuItem" href="{{route('pinganconfig')}}">银行通道配置</a>

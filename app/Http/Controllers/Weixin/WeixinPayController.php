@@ -198,4 +198,10 @@ class WeixinPayController extends BaseController
         /*$notify
          * {"appid":"wx789fb035be0b7481","bank_type":"CFT","cash_fee":"1","fee_type":"CNY","is_subscribe":"Y","mch_id":"1273479101","nonce_str":"58a939461279b","openid":"opnT0s8Pltziuu2qATK3o8bKAWbA","out_trade_no":"20170219022054888820170219022054","result_code":"SUCCESS","return_code":"SUCCESS","sign":"75D69190E5D930EED252E43A83F457BC","sub_mch_id":"1419589702","time_end":"20170219142057","total_fee":"1","trade_type":"JSAPI","transaction_id":"4003762001201702190519905709"} */
     }
+
+    public function paySuccess()
+    {
+        return view('admin.weixin.success');
+    }
+
 }

@@ -21,5 +21,8 @@ class VerifyCsrfToken extends BaseVerifier
         '/operate_notify_url',
         '/notify',
         'alipay_notify',
+        'admin/pingan/notify_url',
+        'admin/pingan/wx_notify_url',
+
     ];
 }

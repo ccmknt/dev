@@ -32,7 +32,6 @@ class PublicController extends BaseController
         $aop = $this->AopClient();
         $aop->apiVersion = '2.0';
         $aop->method = "alipay.offline.material.image.upload";
-        $aop->app_auth_token = $app_auth_token;
         $requests = new AlipayOfflineMaterialImageUploadRequest();
         $requests->setImageType($entension);
         $requests->setImageName($newName);
@@ -71,19 +70,38 @@ class PublicController extends BaseController
         return json_encode($data);
 
     }
-
-    public function uploadlocal(Request $request)
+   //平安
+    public function uploadImagePingAn(Request $request)
     {
-     $store_id=$request->get('store_id');
-     $file = Input::file('image');
+        $file = Input::file('image');
+        $external_id=$request->get('external_id');
         if ($file->isValid()) {
             $entension = $file->getClientOriginalExtension(); //上传文件的后缀.
             $newName = date('YmdHis') . mt_rand(100, 999) . '.' . $entension;
-            $path = $file->move(public_path() . '/uploads/'.$store_id.'/', $newName);
+            $path = $file->move(public_path() . '/uploads/'.$external_id.'/', $newName);
 
         }
         $data = [
-            'image_url' => url('/uploads/' .$store_id.'/'. $newName),
+            'image_url' => url('/uploads/' .$external_id.'/'. $newName),
+            'status' => 1,
+        ];
+
+        return json_encode($data);
+
+    }
+
+    public function uploadlocal(Request $request)
+    {
+        $store_id = $request->get('store_id');
+        $file = Input::file('image');
+        if ($file->isValid()) {
+            $entension = $file->getClientOriginalExtension(); //上传文件的后缀.
+            $newName = date('YmdHis') . mt_rand(100, 999) . '.' . $entension;
+            $path = $file->move(public_path() . '/uploads/' . $store_id . '/', $newName);
+
+        }
+        $data = [
+            'image_url' => url('/uploads/' . $store_id . '/' . $newName),
             'status' => 1,
         ];
 

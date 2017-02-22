@@ -124,7 +124,7 @@ class ShopsListsController extends BaseController
             ->join('weixin_shop_lists', 'wx_pay_orders.mch_id', '=', 'weixin_shop_lists.store_id')
             ->select('wx_pay_orders.*', 'weixin_shop_lists.store_name')
             ->orderBy('updated_at', 'desc')
-            ->paginate(8);;
+            ->paginate(8);
 
         return view('admin.weixin.wxorder', compact('wxorder'));
 

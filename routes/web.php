@@ -110,6 +110,7 @@ Route::group(['namespace' => 'Api'/*'middleware' => 'auth'*/, 'prefix' => 'admin
     Route::any('/getCity', 'ProvinceCityController@getCity')->name("getCity");
     Route::any('/getCategory', 'AlipayShopCategoryController@getCategory')->name("getCategory");
     Route::any('/OrderStatus', 'AlipayTradeCreateController@OrderStatus')->name("OrderStatus");
+    Route::any('/uploadImagePingAn', 'PublicController@uploadImagePingAn')->name("uploadImagePingAn");//上传至服务器
 
 });
 //API  AUTH
@@ -135,6 +136,8 @@ Route::group(['namespace' => 'Weixin', 'prefix' => 'admin/weixin'], function () 
     Route::any('/order', 'WeixinPayController@order')->name('order');
     Route::any('/createorder', 'WeixinPayController@createOrder');
     Route::any('/ordernotify', 'WeixinPayController@ordernotify');
+    Route::get('/paySuccess', 'WeixinPayController@paySuccess')->name('paySuccess');
+
 });
 //需要登陆
 Route::group(['namespace' => 'Weixin', 'middleware' => 'auth', 'prefix' => 'admin/weixin'], function () {
@@ -166,7 +169,7 @@ Route::group(['namespace' => 'AlipayWeixin', 'middleware' => 'auth', 'prefix' =>
 
 });
 
-//平安银行
+//平安银行 需要登录
 Route::group(['namespace' => 'PingAn', 'middleware' => 'auth', 'prefix' => 'admin/pingan'], function () {
     Route::get('/index', 'StoreController@index')->name('PingAnStoreIndex');
     Route::get('/add', 'StoreController@add')->name('PingAnStoreAdd');
@@ -177,16 +180,41 @@ Route::group(['namespace' => 'PingAn', 'middleware' => 'auth', 'prefix' => 'admi
     Route::get('/setMerchantRate', 'StoreController@setMerchantRate')->name('setMerchantRate');
     Route::post('/setMerchantRatePost', 'StoreController@setMerchantRatePost')->name('setMerchantRatePost');
     Route::get('/PingAnStoreQR', 'StoreController@PingAnStoreQR')->name('PingAnStoreQR');
-
+    Route::get('/OrderQuery', 'StoreController@OrderQuery')->name('PingAnOrderQuery');
     //空码生成
     Route::get('/QrLists', 'PinganQrController@QrLists')->name('QrLists');
     Route::post('/createQr', 'PinganQrController@createQr')->name('createQr');
     Route::any('/DownloadQr', 'PinganQrController@DownloadQr')->name('DownloadQr');
+
+    //二维码跳转地址
+    Route::any('/Qrcode', 'PinganQrController@Qrcode')->name('Qrcode');
+
     //通道配置模块
     Route::get('/pinganconfig', 'PingAnConfigController@pinganconfig')->name('pinganconfig');
     Route::post('/savepinganconfig', 'PingAnConfigController@savepinganconfig')->name('savepinganconfig');
 
 
+    //支付宝 微信
+    Route::get('/alipay', 'AlipayController@alipay');
+});
+
+//平安银行 不要登录可访问
+Route::group(['namespace' => 'PingAn', 'prefix' => 'admin/pingan'], function () {
+    //支付宝 微信
+    Route::get('/alipay', 'AlipayController@alipay');
+    Route::post('/PingAnAlipay', 'AlipayController@PingAnAlipay')->name('PingAnAlipay');
+    Route::get('/ReturnStatus', 'AlipayController@ReturnStatus')->name('ReturnStatus');
+    Route::get('/PaySuccess', 'AlipayController@PaySuccess');
+    Route::get('/weixin/orderview', 'WeiXinController@orderview');
+    Route::post('/PAWxOrder', 'WeiXinController@PAWxOrder')->name('PAWxOrder');
+    Route::any('/notify_url', 'NotifyController@notify_url');
+    Route::any('/wx_notify_url', 'NotifyController@wx_notify_url');
+
+});
+
+//链接
+Route::group(['namespace' => 'PingAn'], function () {
+    Route::get('/Qrcode', 'PinganQrController@QrCode');
 });
 //商户自助提交
 Route::group(['namespace' => 'PingAn', 'prefix' => 'admin/pingan'], function () {
@@ -195,6 +223,7 @@ Route::group(['namespace' => 'PingAn', 'prefix' => 'admin/pingan'], function () 
     Route::get('/success', 'StoreController@success')->name('PingAnSuccess');
     Route::get('/autom', 'StoreController@autom')->name('autom');
     Route::post('/automPost', 'StoreController@automPost')->name('automPost');
-
+    Route::get('/autoFile', 'StoreController@autoFile')->name('autoFile');
+    Route::post('/autoFilePost', 'StoreController@autoFilePost')->name('autoFilePost');
 
 });

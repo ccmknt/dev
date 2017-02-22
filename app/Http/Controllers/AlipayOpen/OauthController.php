@@ -98,7 +98,7 @@ class OauthController extends AlipayOpenController
             //  +"user_id": "2088102168897200"
             return redirect("/alipayopen/userinfo?user_id=" . $app_response->user_id);
         } //A用户授权跳转收款
-        if ($arr[0] == "OSK" || $arr[0] == "SXD") {
+        if ($arr[0] == "OSK" || $arr[0] == "SXD" ||$arr[0] == "PA") {
             //SYD_2088402162863826  扫码下单 生成二维码 用户输入金额 完成付款
             $type = $arr[0];
             $u_id = $arr[1];
@@ -128,6 +128,10 @@ class OauthController extends AlipayOpenController
             //仅生成收款码
             if ($type == 'OSK') {
                 return redirect(url('admin/alipayopen/alipay_oqr_create?u_id=' . $u_id));//跳转到输入金额页面
+            }
+            //跳到平安界面
+            if ($type == 'PA') {
+                return redirect(url('admin/pingan/alipay?u_id=' . $u_id));//跳转到输入金额页面
             }
             /*
              *  dd($re);

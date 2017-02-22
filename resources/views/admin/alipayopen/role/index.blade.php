@@ -20,7 +20,7 @@
                     </div>
                     <div class="ibox-content">
                         <div class="table-responsive">
-                            <table class="table table-striped">
+                            <table class="table table-striped" style="Word-break: break-all;">
                                 <thead>
                                 <tr>
                                     <th>id</th>
