@@ -17,7 +17,7 @@ class AopClient
     //私钥字符串
     public $rsaPrivateKey;
     //网关
-    public $gatewayUrl = "https://openapi-liquidation-test.51fubei.com/gateway";
+    public $gatewayUrl = "https://openapi-liquidation.51fubei.com/gateway";
     //返回数据格式
     public $format = "json";
     //api版本

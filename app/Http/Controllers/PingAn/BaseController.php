@@ -20,7 +20,7 @@ class BaseController extends Controller
         //1.接入参数初始化
         $c = new AopClient();
         $c->signType = "RSA2";//升级算法
-        $c->gatewayUrl = 'https://openapi-liquidation-test.51fubei.com/gateway';
+        $c->gatewayUrl = 'https://openapi-liquidation.51fubei.com/gateway';
         $c->appId = $config->app_id;
         //软件生成的应用私钥字符串
         $c->rsaPrivateKey = $config->rsaPrivateKey;

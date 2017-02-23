@@ -35,7 +35,7 @@
                     },
                     function (data) {
                         if (data.success) {
-                            window.location.href = 'https://openapi-liquidation-test.51fubei.com/payPage/?prepay_id=' + data.return_value.prepay_id + '&callback_url=' + '{{url('/admin/weixin/paySuccess')}}';
+                            window.location.href = 'https://openapi-liquidation.51fubei.com/payPage/?prepay_id=' + data.return_value.prepay_id + '&callback_url=' + '{{url('/admin/weixin/paySuccess')}}';
                         } else {
                             window.location.href = "{{url('admin/alipayopen/OrderErrors')}}";
                         }
