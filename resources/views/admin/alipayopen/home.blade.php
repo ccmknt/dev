@@ -45,6 +45,7 @@
 
                         </div>
                     </div>
+                    @permission('appsUadate')
                     <div class="col-sm-8">
                         <div class="ibox float-e-margins">
                             <div class="ibox-title">
@@ -60,6 +61,7 @@
                             </div>
                         </div>
                     </div>
+                    @endpermission
                 </div>
                 <div class="row">
                     <div class="col-sm-9" style="padding-right:0;">

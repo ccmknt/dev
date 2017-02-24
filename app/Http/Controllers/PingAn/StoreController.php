@@ -354,7 +354,7 @@ class StoreController extends BaseController
 
     public function success()
     {
-        return view('layouts.success');
+        return view('admin.pingan.store.success');
     }
 
     public function OrderQuery(Request $request)
