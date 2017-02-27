@@ -19,6 +19,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class StoreController extends BaseController
 
@@ -26,6 +27,7 @@ class StoreController extends BaseController
 
     public function index(Request $request)
     {
+
         $auth = Auth::user()->can('pinganstore');
         if (!$auth) {
             echo '你没有权限操作！';
@@ -360,11 +362,20 @@ class StoreController extends BaseController
     public function OrderQuery(Request $request)
     {
 
-        $order = DB::table('pingan_trade_queries')
-            ->join('pingan_stores', 'pingan_trade_queries.store_id', '=', 'pingan_stores.external_id')
-            ->select('pingan_trade_queries.*', 'pingan_stores.alias_name')
-            ->orderBy('updated_at', 'desc')
-            ->paginate(8);
+        if (Auth::user()->hasRole('admin')) {
+            $order = DB::table('pingan_trade_queries')
+                ->join('pingan_stores', 'pingan_trade_queries.store_id', '=', 'pingan_stores.external_id')
+                ->select('pingan_trade_queries.*', 'pingan_stores.alias_name')
+                ->orderBy('updated_at', 'desc')
+                ->paginate(8);
+        } else {
+            $order = DB::table('pingan_trade_queries')
+                ->join('pingan_stores', 'pingan_trade_queries.store_id', '=', 'pingan_stores.external_id')
+                ->select('pingan_trade_queries.*', 'pingan_stores.alias_name')
+                ->where('user_id',Auth::user()->id)
+                ->orderBy('updated_at', 'desc')
+                ->paginate(8);
+        }
         return view('admin.pingan.store.order', compact('order'));
     }
 }

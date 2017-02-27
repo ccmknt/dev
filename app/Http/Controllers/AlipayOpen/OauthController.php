@@ -98,7 +98,7 @@ class OauthController extends AlipayOpenController
             //  +"user_id": "2088102168897200"
             return redirect("/alipayopen/userinfo?user_id=" . $app_response->user_id);
         } //A用户授权跳转收款
-        if ($arr[0] == "OSK" || $arr[0] == "SXD" || $arr[0] == "PA") {
+        if ($arr[0] == "OSK" || $arr[0] == "SXD" ||$arr[0] == "PA") {
             //SYD_2088402162863826  扫码下单 生成二维码 用户输入金额 完成付款
             $type = $arr[0];
             $u_id = $arr[1];
@@ -195,26 +195,16 @@ class OauthController extends AlipayOpenController
             echo '你没有权限操作！';
             die;
         }
-
         //
-        $data = DB::table('users')->select('users.name', 'alipay_app_oauth_users.*')->orderBy('created_at', 'desc')->where('promoter_id', Auth::user()->id)->join('alipay_app_oauth_users', 'alipay_app_oauth_users.promoter_id', '=', 'users.id')->get();
+        $data = DB::table('users')->select('users.name', 'alipay_app_oauth_users.*')->orderBy('updated_at', 'desc')->where('promoter_id', Auth::user()->id)->join('alipay_app_oauth_users', 'alipay_app_oauth_users.promoter_id', '=', 'users.id')->get();
         if (Auth::user()->hasRole('admin')) {
-            $data = DB::table('users')->select('users.name', 'alipay_app_oauth_users.*')->orderBy('created_at', 'desc')->join('alipay_app_oauth_users', 'alipay_app_oauth_users.promoter_id', '=', 'users.id')->get();
+            $data = DB::table('users')->select('users.name', 'alipay_app_oauth_users.*')->orderBy('updated_at', 'desc')->join('alipay_app_oauth_users', 'alipay_app_oauth_users.promoter_id', '=', 'users.id')->get();
         }
-
         if ($data->isEmpty()) {
             $paginator = "";
             $datapage = "";
         } else {
             $data = $data->toArray();
-            //下一版本去掉
-            foreach ($data as $v) {
-             AlipayAppOauthUsers::where('user_id',$v->user_id)->update([
-                 'store_id'=>'o'.$v->user_id
-             ]);
-            }
-            //下一版本去掉结束
-
             //非数据库模型自定义分页
             $perPage = 9;//每页数量
             if ($request->has('page')) {

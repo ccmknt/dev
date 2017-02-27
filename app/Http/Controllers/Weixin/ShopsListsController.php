@@ -117,15 +117,24 @@ class ShopsListsController extends BaseController
         $code_url = url('admin/weixin/oauth?sub_info=pay_' . $mch_id);
         return view('admin.weixin.wxpayqr', compact('code_url', 'shop'));
     }
+
 //收单列表
     public function WxOrder(Request $request)
     {
-        $wxorder = DB::table('wx_pay_orders')
-            ->join('weixin_shop_lists', 'wx_pay_orders.mch_id', '=', 'weixin_shop_lists.store_id')
-            ->select('wx_pay_orders.*', 'weixin_shop_lists.store_name')
-            ->orderBy('updated_at', 'desc')
-            ->paginate(8);
-
+        if (Auth::user()->hasRole('admin')) {
+            $wxorder = DB::table('wx_pay_orders')
+                ->join('weixin_shop_lists', 'wx_pay_orders.mch_id', '=', 'weixin_shop_lists.store_id')
+                ->select('wx_pay_orders.*', 'weixin_shop_lists.store_name')
+                ->orderBy('updated_at', 'desc')
+                ->paginate(8);
+        } else {
+            $wxorder = DB::table('wx_pay_orders')
+                ->join('weixin_shop_lists', 'wx_pay_orders.mch_id', '=', 'weixin_shop_lists.store_id')
+                ->select('wx_pay_orders.*', 'weixin_shop_lists.store_name')
+                ->where('user_id',Auth::user()->id)
+                ->orderBy('updated_at', 'desc')
+                ->paginate(8);
+        }
         return view('admin.weixin.wxorder', compact('wxorder'));
 
     }
