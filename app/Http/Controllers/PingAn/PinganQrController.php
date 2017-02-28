@@ -150,6 +150,10 @@ class PinganQrController extends BaseController
         if ($info->code_type == 1) {
             try {
                 $store = PinganStore::where('external_id', $info->store_id)->first();
+                if ($store->pay_status == 0) {
+                    return '付款码状态关闭！请联系客服！';
+                    dd();
+                }
             } catch (\Exception $exception) {
 
             }

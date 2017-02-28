@@ -41,8 +41,23 @@
                                             <td><span class="pie">{{$v['status']}}</span></td>
                                             <td><span class="pie">{{$v['user_name']}}</span></td>
                                             <td>
-                                                <a href="{{url('admin/pingan/SetStore?id='.$v['id'])}}"><button type="button" class="btn btn-outline btn-primary">商户设置</button></a>
-                                                <a href="{{url('admin/pingan/setMerchantRate?id='.$v['id'])}}"> <button type="button" class="btn btn-outline btn-info">费率调整</button></a>
+                                                <a href="{{url('admin/pingan/SetStore?id='.$v['id'])}}">
+                                                    <button type="button" class="btn btn-outline btn-primary">收款设置
+                                                    </button>
+                                                </a>
+                                                <a href="{{url('admin/pingan/setMerchantRate?id='.$v['id'])}}">
+                                                    <button type="button" class="btn btn-outline btn-info">费率调整</button>
+                                                </a>
+                                                @if($v['pay_status']==1)
+                                                    <button id="cpay" onclick='co("{{$v['id']}}",0)' type="button"
+                                                            class="btn btn-outline btn-warning">关闭收款
+                                                    </button>
+                                                @endif
+                                                @if($v['pay_status']==0)
+                                                    <button id="opay" onclick='co("{{$v['id']}}",1)' type="button"
+                                                            class="btn btn-outline btn-warning">开启收款
+                                                    </button>
+                                                @endif
                                                 <button onclick='del("{{$v['id']}}")' type="button"
                                                         class="btn btn-outline btn-warning">删除
                                                 </button>
@@ -84,6 +99,36 @@
             }, function () {
 
             });
+        }
+
+
+        function co(id, type) {
+            if (type == 0) {
+                //询问框
+                layer.confirm('确定要关闭此商户的收款功能', {
+                    btn: ['确定', '取消'] //按钮
+                }, function () {
+                    $.post("{{route('PayStatus')}}", {_token: "{{csrf_token()}}", id: id, type: type},
+                            function (data) {
+                                window.location.href = "{{route('PingAnStoreIndex')}}";
+                            }, "json");
+                }, function () {
+
+                });
+            } else {
+                //询问框
+                layer.confirm('确定要开启此商户的收款功能', {
+                    btn: ['确定', '取消'] //按钮
+                }, function () {
+                    $.post("{{route('PayStatus')}}", {_token: "{{csrf_token()}}", id: id, type: type},
+                            function (data) {
+                                window.location.href = "{{route('PingAnStoreIndex')}}";
+                            }, "json");
+                }, function () {
+
+                });
+            }
+
         }
     </script>
 

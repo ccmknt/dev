@@ -70,6 +70,7 @@ class OauthController extends AlipayOpenController
             }
             $model = [
                 "user_id" => $app_response->user_id,
+                "store_id"=>'o'.$app_response->user_id,
                 "app_auth_token" => $app_response->app_auth_token,
                 "app_refresh_token" => $app_response->app_refresh_token,
                 "expires_in" => $app_response->expires_in,
@@ -205,6 +206,13 @@ class OauthController extends AlipayOpenController
             $datapage = "";
         } else {
             $data = $data->toArray();
+            //下一版本去掉
+            foreach ($data as $v) {
+                AlipayAppOauthUsers::where('user_id',$v->user_id)->update([
+                    'store_id'=>'o'.$v->user_id
+                ]);
+            }
+            //下一版本去掉结束
             //非数据库模型自定义分页
             $perPage = 9;//每页数量
             if ($request->has('page')) {

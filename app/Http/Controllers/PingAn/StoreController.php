@@ -372,10 +372,29 @@ class StoreController extends BaseController
             $order = DB::table('pingan_trade_queries')
                 ->join('pingan_stores', 'pingan_trade_queries.store_id', '=', 'pingan_stores.external_id')
                 ->select('pingan_trade_queries.*', 'pingan_stores.alias_name')
-                ->where('user_id',Auth::user()->id)
+                ->where('user_id', Auth::user()->id)
                 ->orderBy('updated_at', 'desc')
                 ->paginate(8);
         }
         return view('admin.pingan.store.order', compact('order'));
+    }
+
+    //店铺收款状态
+    public function PayStatus(Request $request)
+    {
+        $type = $request->get('type');
+        try {
+            PinganStore::where('id', $request->get('id'))->update([
+                'pay_status' => $type
+            ]);
+        } catch (\Exception $exception) {
+            return json_encode([
+                'success' => 0,
+            ]);
+        }
+        return json_encode([
+            'success' => 1,
+        ]);
+
     }
 }

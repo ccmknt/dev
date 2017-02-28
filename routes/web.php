@@ -175,6 +175,7 @@ Route::group(['namespace' => 'PingAn', 'middleware' => 'auth', 'prefix' => 'admi
     Route::get('/add', 'StoreController@add')->name('PingAnStoreAdd');
     Route::post('/addPost', 'StoreController@addpost')->name('PingAnStoreAddPost');
     Route::post('/DelPinanStore', 'StoreController@DelPinanStore')->name('DelPinanStore');
+    Route::post('/PayStatus', 'StoreController@PayStatus')->name('PayStatus');
     Route::get('/SetStore', 'StoreController@SetStore')->name('SetStore');
     Route::post('/SetStorePost', 'StoreController@SetStorePost')->name('SetStorePost');
     Route::get('/setMerchantRate', 'StoreController@setMerchantRate')->name('setMerchantRate');
@@ -226,4 +227,9 @@ Route::group(['namespace' => 'PingAn', 'prefix' => 'admin/pingan'], function () 
     Route::get('/autoFile', 'StoreController@autoFile')->name('autoFile');
     Route::post('/autoFilePost', 'StoreController@autoFilePost')->name('autoFilePost');
 
+});
+//商户
+Route::group(['namespace' => 'Merchant','prefix' => 'merchant','middleware' => 'merchant'], function () {
+
+    Route::get('index', 'UserController@index');
 });
