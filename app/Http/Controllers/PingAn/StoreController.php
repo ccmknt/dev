@@ -185,7 +185,7 @@ class StoreController extends BaseController
 
         if ($pay_type == "other") {
 
-            echo '请用支付宝或者微信扫描二维码';
+            return '请用支付宝或者微信扫描二维码';
 
         }
         return view('admin.pingan.store.autostore');
@@ -237,7 +237,7 @@ class StoreController extends BaseController
 
         if ($pay_type == "other") {
 
-            echo '请用支付宝或者微信扫描二维码';
+            return '请用支付宝或者微信扫描二维码';
 
         }
 
@@ -293,13 +293,21 @@ class StoreController extends BaseController
 
         if ($pay_type == "other") {
 
-            echo '请用支付宝或者微信扫描二维码';
+            return '请用支付宝或者微信扫描二维码';
+
 
         }
-
-        return view('admin.pingan.store.autoFile');
-
-
+        try {
+            $StoreInfos = PinganStoreInfos::where('external_id', $request->get('external_id'))->first();
+            if ($StoreInfos) {
+                $StoreInfos = $StoreInfos->toArray();
+                return view('admin.pingan.store.autoFileTwo', compact('StoreInfos'));
+            } else {
+                return view('admin.pingan.store.autoFile');
+            }
+        } catch (\Exception $exception) {
+            return $exception;
+        }
     }
 
     public function autoFilePost(Request $request)
@@ -395,6 +403,37 @@ class StoreController extends BaseController
         return json_encode([
             'success' => 1,
         ]);
+
+    }
+
+    //商户资料
+    public function MerchantFile(Request $request)
+    {
+        $id = $request->get('id');//平安店铺id
+        try {
+            $files = PinganStoreInfos::where('external_id', $id)->first();//店铺资料
+            if ($files) {
+                $files->toArray();
+            } else {
+                $files = [];
+            }
+        } catch (\Exception $exception) {
+            $files = [];
+        }
+        try {
+            if ($p = PingancqrLsitsinfo::where('store_id', $id)->first()) {
+                $code_number = $p->code_number;
+            } else {
+                $code_number = '';
+                dd('商户信息不存在');
+            }
+        } catch (\Exception $exception) {
+            dd('商户信息不存在');
+        }
+        $code_url = url('admin/pingan/autoFile?external_id=' . $id . '&code_number=' . $code_number);
+
+        return view('admin.pingan.store.merchantFile', compact('id', 'files', 'code_url'));
+
 
     }
 }

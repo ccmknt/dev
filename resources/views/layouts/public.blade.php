@@ -22,7 +22,7 @@
     @yield('css')
 </head>
 
-<body class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden">
+<body class="fixed-sidebar full-height-layout gray-bg" >
 @yield('content')
 
 <!-- 全局js -->

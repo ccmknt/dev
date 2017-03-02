@@ -20,7 +20,7 @@
                                 <thead>
                                 <tr>
                                     <th>商户id</th>
-                                    <th>商户全称</th>
+                                  {{--  <th>商户全称</th>--}}
                                     <th>商户简称</th>
                                     <th>联系人名称</th>
                                     <th>联系人手机号</th>
@@ -34,7 +34,7 @@
                                     @foreach($datapage as $v)
                                         <tr>
                                             <td>{{$v['external_id']}}</td>
-                                            <td><span class="pie">{{$v['name']}}</span></td>
+                                          {{--  <td><span class="pie">{{$v['name']}}</span></td>--}}
                                             <td><span class="pie">{{$v['alias_name']}}</span></td>
                                             <td>{{$v['contact_name']}}</td>
                                             <td><span class="pie">{{$v['contact_mobile']}}</span></td>
@@ -47,6 +47,9 @@
                                                 </a>
                                                 <a href="{{url('admin/pingan/setMerchantRate?id='.$v['id'])}}">
                                                     <button type="button" class="btn btn-outline btn-info">费率调整</button>
+                                                </a>
+                                                <a href="{{url('admin/pingan/MerchantFile?id='.$v['external_id'])}}">
+                                                    <button type="button" class="btn btn-outline btn-info">商户资料</button>
                                                 </a>
                                                 @if($v['pay_status']==1)
                                                     <button id="cpay" onclick='co("{{$v['id']}}",0)' type="button"

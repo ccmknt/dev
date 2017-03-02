@@ -197,6 +197,9 @@ Route::group(['namespace' => 'PingAn', 'middleware' => 'auth', 'prefix' => 'admi
 
     //支付宝 微信
     Route::get('/alipay', 'AlipayController@alipay');
+
+    //商户资料
+    Route::get('/MerchantFile', 'StoreController@MerchantFile')->name('MerchantFile');
 });
 
 //平安银行 不要登录可访问
@@ -229,7 +232,15 @@ Route::group(['namespace' => 'PingAn', 'prefix' => 'admin/pingan'], function () 
 
 });
 //商户
-Route::group(['namespace' => 'Merchant','prefix' => 'merchant','middleware' => 'merchant'], function () {
+Route::group(['namespace' => 'Merchant', 'prefix' => 'merchant', 'middleware' => 'auth.merchant'], function () {
+    Route::any('logout', 'LoginController@logout');
+    Route::get('index', 'IndexController@index');
+});
+//商户
+Route::group(['namespace' => 'Merchant', 'prefix' => 'merchant'], function () {
+    Route::get('login', 'LoginController@showLoginForm')->name('merchantLogin');
+    Route::post('login', 'LoginController@login');
+    Route::get('register', 'RegisterController@showRegister')->name('showRegister');
+    Route::post('register1', 'RegisterController@register1');
 
-    Route::get('index', 'UserController@index');
 });
